@@ -38,7 +38,7 @@ def init():
 
     f = Process(target=listenOrder)
     f.start()
-    print "start web listening port: "+config["SERVER_LISTEN_PORT"]
+    print "start web listening port: "+str(config["SERVER_LISTEN_PORT"])
 
     time.sleep(3)
     print "[LOG] start checking after 3 sec..."
@@ -55,7 +55,7 @@ def system_init():
     if lock_file_exists == False:
         init()
     else:
-        # do some initiallzation works
+        # do some initialization works
         url_model = "http://$SERVER_IP:$PORT/api/add_server?quota=$QUOTA&listen_port=$LISTEN_PORT&key=$KEY&location=$LOCATION"
 
         url_str = Template(url_model).substitute(
