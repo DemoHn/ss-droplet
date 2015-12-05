@@ -21,7 +21,7 @@ class recvServer(socketserver.BaseRequestHandler):
         elif status == "error":
             r_str = rtn.error(info)
 
-        rb = bytes(r_str,'ascii')
+        rb = bytes(r_str,'utf-8')
         self.request.sendall(rb)
 
     # check if the socket IP is same from the HOST's IP registered in config.py
@@ -47,7 +47,7 @@ class recvServer(socketserver.BaseRequestHandler):
     # 2) "new" @params : "info":{ "max_traffic","max_devices","expire_timestamp","type"}
     # 3) "revoke" @params : "service_idf"
     def handle(self):
-        data = str(self.request.recv(1024).strip(), 'ascii')
+        data = str(self.request.recv(1024).strip(), 'utf-8')
         try:
             json_data = data.loads(data)
         except ValueError:

@@ -7,7 +7,7 @@ from config import config
 from utils import timeUtil
 import traceback
 """
-This script is worked for checking if one instance is expired.
+This script is dedicated for checking if one instance is expired.
 If so, this instance should be suddenly shutdown and notify the main server to change the status
 and write the log
 """
