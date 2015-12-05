@@ -4,7 +4,7 @@ errcode['500'] = "fatal error"
 errcode['520'] = "data is null"
 
 # socket
-errcode['400'] = "input data is not json"
+errcode['400'] = "json parsing error"
 errcode['401'] = "input data is not complete"
 errcode['402'] = "operation is not allowed"
 errcode['403'] = "client IP not Host!"
