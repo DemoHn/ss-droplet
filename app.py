@@ -10,12 +10,12 @@ from datetime import datetime
 import requests
 dir = os.getcwd()
 sys.path.append(dir)
-
-from web_control import listenOrder
-from ss_server import ssProcess, ssServerDatabase, controlInstance
+from core.socket import start_server
 from auto_shut import checkInstance
 from config import config
 from string import Template
+from model.db_ss_server import ssServerDatabase
+from model.db_service import serviceInfo
 
 def get_file_directory():
     full_path = os.path.realpath(__file__)
@@ -30,21 +30,16 @@ def execCommand(cmd):
 # check if some instances that are not open while it was marked as "active" in the database
 # (usually when the server is going to restart)
 def init():
-    db = ssServerDatabase()
-    ins = db.getActiveInstances()
 
-    for row in ins:
-        controlInstance(row["ssid"],"ACTIVE")
-
-    f = Process(target=listenOrder)
-    f.start()
+    #f = Process(target=listenOrder)
+    #f.start()
+    start_server()
     print "start web listening port: "+str(config["SERVER_LISTEN_PORT"])
 
     time.sleep(3)
-    print "[LOG] start checking after 3 sec..."
+    print "[LOG] start checking loop after 3 sec..."
 
     checkInstance()
-
     while True:
         time.sleep(1)
 
@@ -72,10 +67,10 @@ def system_init():
         except Exception as e:
             traceback.print_exc()
 
-        # create database
-        db = ssServerDatabase()
-        ins = db.getActiveInstances()
-
+        # initialize database
+        ssServerDatabase()
+        serviceInfo()
+        # remove the lock
         os.remove(get_file_directory()+"/.init.lock")
         init()
     pass

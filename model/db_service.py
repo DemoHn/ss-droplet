@@ -1,0 +1,137 @@
+__author__ = 'Mingchuan'
+# Last Edit: 2015-12-4
+from model.model import Database
+from utils import returnModel, timeUtil
+import traceback
+
+class serviceInfo(Database):
+    def __init__(self,env="normal"):
+        self.env = env
+        Database.__init__(self,env = self.env)
+        self.createTable()
+        self.rtn = returnModel()
+
+    def createTable(self):
+        # ss database table
+        # NOTICE: start_time & expire_time are ALL UTC TIME !!!!!!!!!!!!!!
+        try:
+            table_str = '''CREATE TABLE IF NOT EXISTS service_info(
+            service_idf text unique,
+            max_devices integer,
+            max_traffic integer,
+            expire_time datetime,
+            service_type text
+            )'''
+            cursor = self.cursor
+            cursor.execute(table_str)
+            self.connection.commit()
+        except:
+            traceback.print_exc()
+        pass
+
+    # create service
+    # @params
+    # service_idf : service identifier
+    # max_devices : for this service ,the max number of allowed devices. (each device is marked by its MAC address)
+    # max_traffic : max traffic allowed in some time.(maybe a month?) and it should be reset when a new period comes
+    # expire_time : it is available until this time.
+    def createNewService(self,service_idf,max_devices,max_traffic,expire_timestamp,service_type):
+        try:
+            add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time) VALUES (?,?,?,?)"
+            c = self.cursor
+            expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
+            c.execute(add_str,[service_idf,int(max_devices),int(max_traffic),expire_str,service_type])
+
+            self.connection.commit()
+            return self.rtn.success(200)
+        except Exception as e:
+            traceback.print_exc()
+
+    def getItem(self,service_idf):
+        try:
+            get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info WHERE service_idf = ?"
+            c = self.cursor
+            c.execute(get_str,[service_idf])
+            data = c.fetchone()
+
+            if data == None:
+                return self.rtn.error(520)
+            else:
+                model = {
+                    "service_idf" : data[0],
+                    "max_devices" : data[1],
+                    "max_traffic" : data[2],
+                    "expire_time" : data[3],
+                    "service_type": data[4]
+                }
+                return self.rtn.success(model)
+        except Exception as e:
+            traceback.print_exc()
+
+    def deleteItem(self,service_idf):
+        try:
+            del_str = "DELETE FROM service_info WHERE service_idf = ?"
+            c = self.cursor
+            c.execute(del_str,[service_idf])
+            self.connection.commit()
+            return self.rtn.success(200)
+        except Exception as e:
+            traceback.print_exc()
+
+    # and next... check Expired Item
+    # the term "expired" means current time if later than the expired time
+    def checkExpiredService(self):
+        try:
+            expire_str = "SELECT service_idf FROM service_info WHERE datetime('now') > expire_time"
+            c = self.cursor
+            data = c.execute(expire_str)
+
+            model = []
+            for rows in data:
+                model.append(rows[0])
+            return self.rtn.success(model)
+        except Exception as e:
+            traceback.print_exc()
+        pass
+
+    def checkDeviceLimit(self,service_idf):
+        try:
+            check_str = "SELECT max_devices FROM service_info WHERE service_idf = ?"
+            c = self.cursor
+            c.execute(check_str,[service_idf])
+
+            data = c.fetchone()
+            if data == None:
+                return self.rtn.error(520)
+            else:
+                return self.rtn.success(data[0])
+        except Exception as e:
+            traceback.print_exc()
+
+    def checkMaxTraffic(self,service_idf):
+        try:
+            check_str = "SELECT max_traffic FROM service_info WHERE service_idf = ?"
+            c = self.cursor
+            c.execute(check_str,[service_idf])
+
+            data = c.fetchone()
+            if data == None:
+                return self.rtn.error(520)
+            else:
+                return self.rtn.success(data[0])
+        except Exception as e:
+            traceback.print_exc()
+
+    def countActiveService(self):
+        try:
+            count_str = "SELECT count(*) FROM service_info"
+            c = self.cursor
+            c.execute(count_str)
+
+            data = c.fetchone()
+            if data == None:
+                return self.rtn.error(520)
+            else:
+                return self.rtn.success(int(data[0]))
+        except Exception as e:
+            traceback.print_exc()
