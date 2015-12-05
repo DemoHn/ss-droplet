@@ -19,3 +19,6 @@ config["SS_DEFAULT_TIMEOUT"] = 100
 # server working Limitation
 config["MMAX_TRAFFIC"] = 100 * 1000 * 1000 * 1000
 config["MMAX_DEVICES"] = 256
+
+# heart beat pulse unit: s
+config["HEARTBEAT_PULSE"] = 30
