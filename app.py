@@ -34,10 +34,10 @@ def init():
     #f = Process(target=listenOrder)
     #f.start()
     start_server()
-    print "start web listening port: "+str(config["SERVER_LISTEN_PORT"])
+    print("start web listening port: "+str(config["SERVER_LISTEN_PORT"]))
 
     time.sleep(3)
-    print "[LOG] start checking loop after 3 sec..."
+    print("[LOG] start checking loop after 3 sec...")
 
     checkInstance()
     while True:
