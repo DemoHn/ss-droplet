@@ -40,7 +40,7 @@ class ssProcess:
             m = re.search(re_ip,eth0_data)
             return m.group(1)
         else:
-            print "[LOG] get IP Error"
+            print("[LOG] get IP Error")
             return False
         pass
 

@@ -48,7 +48,7 @@ def new_service(max_traffic,max_devices,type,expire_timestamp):
     pass
 
 def gen_service_idf():
-    loop = "0123456789aWcdeFEhijklmnopQrstuvwSyz"
+    loop = "0123456789aWcdeFEhijklmnopQrstuvwSyzZ"
     time_int = (int(time.time()*1000) % (1000*1000)) + randint(100,999) * (1000*1000)
     a = []
     while time_int != 0:
