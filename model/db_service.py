@@ -40,7 +40,7 @@ class serviceInfo(Database):
             add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time) VALUES (?,?,?,?)"
             c = self.cursor
             expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
-            c.execute(add_str,[service_idf,int(max_devices),int(max_traffic),expire_str,service_type])
+            c.execute(add_str,[service_idf,int(max_devices),int(max_traffic),expire_str])
 
             self.connection.commit()
             return self.rtn.success(200)
