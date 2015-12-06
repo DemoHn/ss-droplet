@@ -53,9 +53,6 @@ class recvServer(socketserver.BaseRequestHandler):
         data = str(self.request.recv(1024).strip(), 'utf-8')
         try:
             json_data = json.loads(data)
-        except ValueError:
-            return self.sendSocket("error",400)
-        finally:
             if json_data["from"] == "host":
                 if self.checkHostIP() == False:
                     return self.sendSocket("error",403)
@@ -99,6 +96,8 @@ class recvServer(socketserver.BaseRequestHandler):
                     return self.sendSocket("error",402)
             else:
                 return self.sendSocket("error",405)
+        except ValueError:
+            return self.sendSocket("error",400)
         pass
 
 # start the server
