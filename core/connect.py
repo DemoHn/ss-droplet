@@ -21,7 +21,6 @@ def connect(service_idf,mac_addr):
         return rtn.error(430)
     else:
         info = result['info']
-        print(info)
         # check if devices num is not full
         if (rd.countDevice()+int(rd.deviceInList(mac_addr))) > int(info["max_devices"]):
             return rtn.error(431)

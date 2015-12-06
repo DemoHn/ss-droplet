@@ -37,10 +37,10 @@ class serviceInfo(Database):
     # expire_time : it is available until this time.
     def createNewService(self,service_idf,max_devices,max_traffic,expire_timestamp,service_type):
         try:
-            add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time) VALUES (?,?,?,?)"
+            add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (?,?,?,?,?)"
             c = self.cursor
             expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
-            c.execute(add_str,[service_idf,int(max_devices),int(max_traffic),expire_str])
+            c.execute(add_str,[service_idf,int(max_devices),int(max_traffic),expire_str,service_type])
 
             self.connection.commit()
             return self.rtn.success(200)
