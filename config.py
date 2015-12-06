@@ -5,7 +5,7 @@ config["CONTROL_SERVER_PORT"] = 8080
 
 # config about the server itself
 config["SERVICE_QUOTA"] = 10
-config["SERVER_LISTEN_PORT"] = 7129
+
 config["SERVER_KEY"] = "demohndemohn"
 config["SERVER_LOCATION"] = "SG"
 config["VERSION"] = "0.1.1"
@@ -22,3 +22,10 @@ config["MMAX_DEVICES"] = 256
 
 # heart beat pulse unit: s
 config["HEARTBEAT_PULSE"] = 30
+
+# socket server
+config["SERVER_LISTEN_PORT"] = 7129
+
+# redis server
+config["REDIS_PORT"] = 6379
+config["REDIS_HOST"] = "127.0.0.1"

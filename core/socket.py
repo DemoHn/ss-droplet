@@ -5,6 +5,7 @@ from utils import returnModel
 import threading
 from config import config
 from core.dispatch import new_service
+from core.connect import connect
 import json
 # socket server
 # using TCP protocol
@@ -46,6 +47,7 @@ class recvServer(socketserver.BaseRequestHandler):
     # COMMAND LIST
     # 1) "ping" : just test if the server is OK. return "pong"
     # 2) "new" @params : "info":{ "max_traffic","max_devices","expire_timestamp","type"}
+    # 3) "connect" @params: "mac_addr","service_idf"
     # 3) "revoke" @params : "service_idf"
     def handle(self):
         data = str(self.request.recv(1024).strip(), 'utf-8')
@@ -80,7 +82,23 @@ class recvServer(socketserver.BaseRequestHandler):
                         return self.sendSocket("success",dispatch_result["info"])
                 else:
                     return self.sendSocket("error",402)
-            # TODO
+            # connect to the remote server first.the server return the configuration.
+            elif json_data["command"] == "connect":
+                if json_data["from"] == "client":
+                    mac_addr = json_data["mac_addr"]
+                    service_idf = json_data["service_idf"]
+                    result = connect(service_idf,mac_addr)
+
+                    if result["status"] == "error":
+                        return self.sendSocket("error",int(result["code"]))
+                    else:
+                        _data = json.dumps(result["info"])
+                        return self.sendSocket("success",_data)
+                    pass
+                else:
+                    return self.sendSocket("error",402)
+            else:
+                return self.sendSocket("error",405)
         pass
 
 # start the server

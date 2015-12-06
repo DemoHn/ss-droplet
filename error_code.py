@@ -15,3 +15,7 @@ errcode['421'] = "dispatch out of quota"
 errcode['422'] = "can't dispatch a port"
 errcode['423'] = "create instance error"
 errcode['424'] = "process creation error"
+
+# service_idf error
+errcode['430'] = "service_idf not available"
+errcode['431'] = "device num is full"

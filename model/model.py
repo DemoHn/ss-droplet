@@ -1,7 +1,8 @@
 __author__ = 'Mingchuan'
-
+import redis
 import os,subprocess,traceback
 import sqlite3
+from config import config
 class Database:
     def __init__(self,env="normal"):
         # server instance management for shadowsocks server instances.
@@ -50,8 +51,19 @@ class Database:
 
 # TODO add redis server
 # Redis Server. Need redis support on server side
+# To install redis , just prompt:
+# $ apt-get install redis-server
+# $ pip3 install redis
 class RedisDatabase:
-    def __init__(self):
+    def __init__(self,env="normal"):
+        self.redis = self.connect()
         pass
 
-
+    def connect(self):
+        try:
+            r = redis.StrictRedis(host=config["REDIS_HOST"], port=config["REDIS_PORT"], db=0)
+            # test if redis server is connected
+            r.ping()
+            return r
+        except Exception as e:
+            return None
