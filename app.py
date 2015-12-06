@@ -10,7 +10,7 @@ from datetime import datetime
 import requests
 dir = os.getcwd()
 sys.path.append(dir)
-from core.socket import start_server
+from core.socket import start_socket_server
 from auto_shut import checkInstance
 from config import config
 from string import Template
@@ -31,9 +31,7 @@ def execCommand(cmd):
 # (usually when the server is going to restart)
 def init():
 
-    #f = Process(target=listenOrder)
-    #f.start()
-    start_server()
+    start_socket_server()
     print("start web listening port: "+str(config["SERVER_LISTEN_PORT"]))
 
     time.sleep(3)

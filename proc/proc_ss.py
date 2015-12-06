@@ -40,7 +40,6 @@ class ssProcess:
             m = re.search(re_ip,eth0_data)
             return m.group(1)
         else:
-            print("[LOG] get IP Error")
             return False
         pass
 
@@ -72,7 +71,6 @@ class ssProcess:
         return process
 
     def createProcess(self,port,password,timeout=100,method="rc4-md5"):
-
         if not self.getIP():
             return False
         else:

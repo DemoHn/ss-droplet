@@ -19,3 +19,8 @@ errcode['424'] = "process creation error"
 # service_idf error
 errcode['430'] = "service_idf not available"
 errcode['431'] = "device num is full"
+
+# process error
+errcode['450'] = "kill process error"
+errcode["451"] = "create process error"
+errcode["452"] = ""

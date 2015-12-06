@@ -92,10 +92,6 @@ def start_shadowsocks():
             # insert success, then create real process
             result = ssProc.createProcess(service_port,service_password,service_timeout,service_method)
             # if the process not open successfully (maybe... just not install ss-server LOL)
-            if result == False:
-                # delete the registered instance
-                ssDB.deleteInstance(service_idf)
-                return rtn.error(424)
-            else:
-                return rtn.success(service_idf)
+            # (2015-12-06)UPDATE : DO NOT CHECK THE RESULT OF PROCESS CREATION!!
+            return rtn.success(service_idf)
     pass

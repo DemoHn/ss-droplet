@@ -1,10 +1,9 @@
-import sys,os,re
+from model.db_service import serviceInfo
 import subprocess
 import threading
-import requests
-from string import Template
 from config import config
 from utils import timeUtil
+from core.revoke import revoke
 import traceback
 """
 This script is dedicated for checking if one instance is expired.
@@ -12,6 +11,8 @@ If so, this instance should be suddenly shutdown and notify the main server to c
 and write the log
 """
 def checkInstance():
+    infoDB = serviceInfo()
+
     pass
     timer_init()
 
