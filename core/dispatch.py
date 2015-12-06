@@ -39,7 +39,7 @@ def new_service(max_traffic,max_devices,type,expire_timestamp):
                 elif result['status'] == "success":
                     # add service info
                     service_idf = result["info"]
-                    sDB.createNewService(service_idf,max_devices,max_traffic,expire_timestamp)
+                    sDB.createNewService(service_idf,max_devices,max_traffic,expire_timestamp,type)
                     return rtn.success(result['info'])
                 else:
                     return rtn.error(420)
@@ -48,13 +48,12 @@ def new_service(max_traffic,max_devices,type,expire_timestamp):
     pass
 
 def gen_service_idf():
-    loop = "0123456789aWcdeFEhijklmnopQrstuvwSyzZ"
-    time_int = (int(time.time()*1000) % (1000*1000)) + randint(100,999) * (1000*1000)
+    loop_str = "0123456789aWcdeFEhijklmnopQrstuvwSyzZ"
+    time_int = (int(time.time()*1000) % (1000*1000)) + int(randint(100,999) * (1000*1000))
     a = []
-    while time_int != 0:
-        a.append(loop[time_int % 36])
-        time_int = time_int / 36
-
+    while time_int > 0:
+        a.append(loop_str[int(time_int) % 36])
+        time_int = int(time_int / 36)
     a.reverse()
     return ''.join(a)
 

@@ -26,6 +26,7 @@ class ssProcess:
     def execOut(self,cmd):
         p = subprocess.Popen(cmd,shell=True, stdout= subprocess.PIPE)
         (out,err) = p.communicate()
+        out = out.decode("utf-8")
         return out
 
     def getIP(self):
@@ -34,7 +35,6 @@ class ssProcess:
         eth0_data = self.execOut("ifconfig eth0")
 
         re_ip = "inet addr:([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)"
-
         # if can't read proper info
         if eth0_data.find("inet addr") > 0:
             m = re.search(re_ip,eth0_data)
