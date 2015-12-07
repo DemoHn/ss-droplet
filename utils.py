@@ -6,6 +6,11 @@ import re
 import json
 from error_code import errcode
 
+def get_file_directory():
+    full_path = os.path.realpath(__file__)
+    path,file = os.path.split(full_path)
+    return path
+
 class timeUtil:
     def __init__(self):
         pass
@@ -81,3 +86,27 @@ class returnModel:
             return json.dumps(rtn)
         else:
             return rtn
+
+# 统计本目录下所有*.py文件加在一起的总行数
+def get_line_number(directory):
+    num = 0
+    # get file list
+    file_list = os.listdir(directory)
+
+    for item in file_list:
+        _item = item
+        item = os.path.normpath(directory+"/"+item)
+        # if it is file and it is *.py
+        if os.path.isfile(item) and item.find(".py") > 0 and item.find("bottle.py") < 0:
+            f = open(item)
+            nums = len(f.readlines())
+            num += nums
+            print("---"+str(_item)+": "+str(nums))
+            f.close()
+        elif os.path.isdir(item+"/") and item != ".git" and item != "assets":
+            subdir = os.path.normpath(item)
+
+            num += get_line_number(subdir)
+    return num
+#行数统计
+print("\nfinal line number: "+str(get_line_number(get_file_directory())))

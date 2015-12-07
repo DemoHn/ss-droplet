@@ -1,5 +1,5 @@
 from model.db_service import serviceInfo
-import subprocess
+import time
 import threading
 from config import config
 from utils import timeUtil
@@ -12,7 +12,11 @@ and write the log
 """
 def checkInstance():
     infoDB = serviceInfo()
-
+    idfs = infoDB.checkExpiredService()
+    if idfs["status"] == "success":
+        for item in idfs["info"]:
+            revoke(item)
+            time.sleep(0.2)
     pass
     timer_init()
 

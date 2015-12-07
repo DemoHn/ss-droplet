@@ -44,7 +44,6 @@ class recvServer(socketserver.BaseRequestHandler):
     #   "command"  : "new" | "delete" | "connect" etc. (see the following description of commands)
     # }
     #
-    # AND don't use try!
     # COMMAND LIST
     # 1) "ping" : just test if the server is OK. return "pong"
     # 2) "new" @params : "info":{ "max_traffic","max_devices","expire_timestamp","type"}
