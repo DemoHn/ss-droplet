@@ -133,3 +133,33 @@ def start_socket_server():
 #
 # =================== CLIENT ===================
 #
+def send_socket_request(dest_ip,dest_port,data,type="TCP"):
+    rtn = returnModel()
+    dest_port = int(dest_port)
+    if type == "TCP":
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.settimeout(5)
+            sock.connect((dest_ip,dest_port))
+            sock.settimeout(None)
+            sock.sendall(bytes(data + "\n","utf-8"))
+
+            # recv data
+            recv = str(sock.recv(1024),"utf-8")
+            sock.close()
+
+            return json.loads(recv)
+        except socket.timeout:
+            return rtn.error(801)
+
+    elif type == "UDP":
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            sock.sendto(bytes(data + "\n","utf-8"),(dest_ip,dest_port))
+            recv = str(sock.recv(1024),"utf-8")
+
+            return json.loads(recv)
+        except Exception as e:
+            return rtn.error(800)
+    pass
+

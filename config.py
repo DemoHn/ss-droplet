@@ -20,7 +20,7 @@ config["SS_DEFAULT_TIMEOUT"] = 100
 config["MMAX_TRAFFIC"] = 100 * 1000 * 1000 * 1000
 config["MMAX_DEVICES"] = 256
 
-# heart beat pulse unit: s
+# heart beat pulse unit: sec
 config["HEARTBEAT_PULSE"] = 30
 
 # socket server

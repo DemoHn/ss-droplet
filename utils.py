@@ -1,5 +1,6 @@
+#coding=utf-8
 __author__ = 'Mingchuan'
-
+import os
 import time
 from datetime import datetime
 import re
@@ -87,7 +88,7 @@ class returnModel:
         else:
             return rtn
 
-# Í³¼Æ±¾Ä¿Â¼ÏÂËùÓĞ*.pyÎÄ¼ş¼ÓÔÚÒ»ÆğµÄ×ÜĞĞÊı
+# ç»Ÿè®¡æœ¬ç›®å½•ä¸‹æ‰€æœ‰*.pyæ–‡ä»¶åŠ åœ¨ä¸€èµ·çš„æ€»è¡Œæ•°
 def get_line_number(directory):
     num = 0
     # get file list
@@ -108,5 +109,5 @@ def get_line_number(directory):
 
             num += get_line_number(subdir)
     return num
-#ĞĞÊıÍ³¼Æ
+#è¡Œæ•°ç»Ÿè®¡
 print("\nfinal line number: "+str(get_line_number(get_file_directory())))

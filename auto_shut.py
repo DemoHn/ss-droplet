@@ -22,4 +22,4 @@ def checkInstance():
 
 def timer_init():
     t = threading.Timer
-    t(config["HEARTBEAT_PULSE"],checkInstance).start()
+    t(int(config["HEARTBEAT_PULSE"]),checkInstance).start()
