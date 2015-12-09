@@ -7,6 +7,7 @@ from config import config
 from core.dispatch import new_service
 from core.connect import connect
 from core.revoke import revoke
+from core.postpone import postpone
 import json
 # socket server
 # using TCP protocol
@@ -48,7 +49,8 @@ class recvServer(socketserver.BaseRequestHandler):
     # 1) "ping" : just test if the server is OK. return "pong"
     # 2) "new" @params : "info":{ "max_traffic","max_devices","expire_timestamp","type"}
     # 3) "connect" @params: "mac_addr","service_idf"
-    # 3) "revoke" @params : "service_idf"
+    # 4) "revoke" @params : "service_idf"
+    # 5) "postpone" @params: "service_idf","postpone_timestamp"
     def handle(self):
         data = str(self.request.recv(1024).strip(), 'utf-8')
         try:
@@ -78,7 +80,8 @@ class recvServer(socketserver.BaseRequestHandler):
                         # return service_idf and expire_date
                         rtn_model = {
                             "expire_timestamp": expire_timestamp,
-                            "service_idf"     : dispatch_result["info"]
+                            "service_idf"     : dispatch_result["info"]["service_idf"],
+                            "conf_content"    : dispatch_result["info"]["config"]
                         }
                         return self.sendSocket("success",rtn_model)
                 else:
@@ -115,6 +118,21 @@ class recvServer(socketserver.BaseRequestHandler):
                         return self.sendSocket("success",200)
                 else:
                     return self.sendSocket("error",402)
+
+            # postpone
+            elif json_data["command"] == "postpone":
+                if json_data["from"] == "host":
+                    service_idf      = json_data["service_idf"]
+                    expire_timestamp = int(json_data["postpone_timestamp"])
+                    res              = postpone(service_idf,expire_timestamp)
+
+                    if res["status"] == "error":
+                        return self.sendSocket("error",res["code"])
+                    else:
+                        return self.sendSocket("success",200)
+                else:
+                    return self.sendSocket("error",402)
+
             else:
                 return self.sendSocket("error",405)
         except ValueError:
@@ -145,7 +163,7 @@ def send_socket_request(dest_ip,dest_port,data,type="TCP"):
             sock.sendall(bytes(data + "\n","utf-8"))
 
             # recv data
-            recv = str(sock.recv(1024),"utf-8")
+            recv = str(sock.recv(2048),"utf-8")
             sock.close()
 
             return json.loads(recv)
@@ -156,10 +174,8 @@ def send_socket_request(dest_ip,dest_port,data,type="TCP"):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             sock.sendto(bytes(data + "\n","utf-8"),(dest_ip,dest_port))
-            recv = str(sock.recv(1024),"utf-8")
+            recv = str(sock.recv(2048),"utf-8")
 
             return json.loads(recv)
         except Exception as e:
             return rtn.error(800)
-    pass
-

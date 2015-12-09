@@ -3,19 +3,15 @@
 
 import sys,os
 import subprocess
-import time
-from multiprocessing import Process
-import traceback
-from datetime import datetime
-import requests
+import json
 dir = os.getcwd()
 sys.path.append(dir)
-from core.socket import start_socket_server
+from core.socket import start_socket_server, send_socket_request
 from auto_shut import checkInstance
 from config import config
-from string import Template
 from model.db_ss_server import ssServerDatabase
 from model.db_service import serviceInfo
+import time
 
 def get_file_directory():
     full_path = os.path.realpath(__file__)
@@ -34,9 +30,6 @@ def init():
     start_socket_server()
     print("start web listening port: "+str(config["SERVER_LISTEN_PORT"]))
 
-    time.sleep(3)
-    print("[LOG] start checking loop after 3 sec...")
-
     checkInstance()
     while True:
         time.sleep(1)
@@ -48,23 +41,27 @@ def system_init():
     if lock_file_exists == False:
         init()
     else:
-        # do some initialization works
-        url_model = "http://$SERVER_IP:$PORT/api/add_server?quota=$QUOTA&listen_port=$LISTEN_PORT&key=$KEY&location=$LOCATION"
+        send_pack = {
+            "command": "register_server",
+            "info":{
+                "listen_port":config["SERVER_LISTEN_PORT"],
+                "location":config["SERVER_LOCATION"],
+                "service_quota":config["SERVICE_QUOTA"]
+            }
+        }
+        # send
+        for i in range(0,3):
+            return_data = send_socket_request(
+                config["CONTROL_SERVER_IP"],
+                config["CONTROL_SERVER_TCP_PORT"],
+                json.dumps(send_pack),
+                type="TCP"
+            )
 
-        url_str = Template(url_model).substitute(
-            PORT = config["CONTROL_SERVER_PORT"],
-            SERVER_IP = config["CONTROL_SERVER_IP"],
-            QUOTA = config["SERVER_QUOTA"],
-            LISTEN_PORT = config["SERVER_LISTEN_PORT"],
-            KEY = config["SERVER_KEY"],
-            LOCATION = config["SERVER_LOCATION"]
-        )
-
-        try:
-            r = requests.get(url_str)
-        except Exception as e:
-            traceback.print_exc()
-
+            if return_data["status"] == "success":
+                break
+            else:
+                time.sleep(1)
         # initialize database
         ssServerDatabase()
         serviceInfo()

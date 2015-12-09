@@ -58,6 +58,18 @@ def gen_service_idf():
     return ''.join(a)
 
 def start_shadowsocks():
+
+    return_data_config = {
+        "server_port" : "",
+        "password"    : "",
+        "method"      : "",
+        "timeout"     : ""
+    }
+
+    return_data = {
+        "service_idf":"",
+        "config":return_data_config
+    }
     rtn = returnModel()
     from model.db_ss_server import ssServerDatabase
     from proc.proc_ss import ssProcess
@@ -93,5 +105,12 @@ def start_shadowsocks():
             result = ssProc.createProcess(service_port,service_password,service_timeout,service_method)
             # if the process not open successfully (maybe... just not install ss-server LOL)
             # (2015-12-06)UPDATE : DO NOT CHECK THE RESULT OF PROCESS CREATION!!
-            return rtn.success(service_idf)
+
+            # insert config data
+            return_data_config["server_port"] = service_port
+            return_data_config["password"]    = service_password
+            return_data_config["method"]      = service_method
+            return_data_config["timeout"]     = service_timeout
+            return_data["service_idf"]        = service_idf
+            return rtn.success(return_data)
     pass

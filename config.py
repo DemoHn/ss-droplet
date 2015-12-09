@@ -2,7 +2,8 @@ config = {}
 
 config["CONTROL_SERVER_IP"] = "116.251.217.98"
 config["CONTROL_SERVER_PORT"] = 8080
-
+config["CONTROL_SERVER_TCP_PORT"] = 6983
+config["CONTROL_SERVER_UDP_PORT"] = 6989
 # config about the server itself
 config["SERVICE_QUOTA"] = 10
 
@@ -16,8 +17,8 @@ config["SHADOWSOCKS_MAX_PORT"] = 15000
 config["SS_DEFAULT_METHOD"] = "rc4-md5"
 config["SS_DEFAULT_TIMEOUT"] = 100
 
-# server working Limitation
-config["MMAX_TRAFFIC"] = 100 * 1000 * 1000 * 1000
+# server working Limitation (unit: MB)
+config["MMAX_TRAFFIC"] = 300 * 1000
 config["MMAX_DEVICES"] = 256
 
 # heart beat pulse unit: sec

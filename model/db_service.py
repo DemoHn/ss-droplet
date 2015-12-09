@@ -135,3 +135,16 @@ class serviceInfo(Database):
                 return self.rtn.success(int(data[0]))
         except Exception as e:
             traceback.print_exc()
+
+    # update sth
+    def updateExpireTimestamp(self,service_idf,expire_timestamp):
+        try:
+            c = self.cursor
+            expire_time = timeUtil.getReadableTime(expire_timestamp,0)
+            update_str = "UPDATE service_info SET expire_time = ? WHERE service_idf = ?"
+            c.execute(update_str,[expire_time,service_idf])
+            self.connection.commit()
+
+            return self.rtn.success(200)
+        except Exception as e:
+            traceback.print_exc()

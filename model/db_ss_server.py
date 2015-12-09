@@ -4,7 +4,7 @@ __author__ = "Mingchuan"
 
 from model.model import Database
 import traceback
-from utils import returnModel
+from utils import returnModel, timeUtil
 
 class ssServerDatabase(Database):
     # ONLY record shadowsocks server info.
@@ -118,7 +118,6 @@ class ssServerDatabase(Database):
             return self.rtn.success(200)
         except Exception as e:
             traceback.print_exc()
-            pass
 
     # to detect if thte dest_port is already duplicated with another instance
     def portCollision(self,dest_port):
