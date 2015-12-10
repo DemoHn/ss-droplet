@@ -45,7 +45,7 @@ def start_cron_task():
     # add job with some rules
     # 1. send a heart_beat UDP package to declare that the server is still alive.
     #    As for the frequency... 0s or 30s per every miniute
-    scheduler.add_job(send_heart_beat_package,'cron',second="0/30")
+    scheduler.add_job(send_heart_beat_package,'cron',second=5)
     # start the scheudler
     scheduler.start()
 
