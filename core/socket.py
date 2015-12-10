@@ -174,8 +174,6 @@ def send_socket_request(dest_ip,dest_port,data,type="TCP"):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             sock.sendto(bytes(data + "\n","utf-8"),(dest_ip,dest_port))
-            recv = str(sock.recv(2048),"utf-8")
-            sock.close()
-            return json.loads(recv)
+            return rtn.success(200)
         except Exception as e:
             return rtn.error(800)
