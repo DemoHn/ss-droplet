@@ -7,7 +7,7 @@ import json
 dir = os.getcwd()
 sys.path.append(dir)
 from core.socket import start_socket_server, send_socket_request
-from auto_shut import checkInstance
+from cron_task import start_cron_task, stop_cron_task
 from config import config
 from model.db_ss_server import ssServerDatabase
 from model.db_service import serviceInfo
@@ -30,9 +30,13 @@ def init():
     start_socket_server()
     print("start web listening port: "+str(config["SERVER_LISTEN_PORT"]))
 
-    checkInstance()
-    while True:
-        time.sleep(1)
+    scheduler = start_cron_task()
+    try:
+        while True:
+            time.sleep(1)
+    # if the server received KILL signal, just exit
+    except (KeyboardInterrupt,SystemExit):
+        stop_cron_task(scheduler)
 
 # for the first time, do the function
 def system_init():

@@ -99,7 +99,7 @@ def get_line_number(directory):
         item = os.path.normpath(directory+"/"+item)
         # if it is file and it is *.py
         if os.path.isfile(item) and item.find(".py") > 0 and item.find("bottle.py") < 0:
-            f = open(itemi,"rb")
+            f = open(item,"rb")
             nums = len(f.readlines())
             num += nums
             print("---"+str(_item)+": "+str(nums))
@@ -110,4 +110,4 @@ def get_line_number(directory):
             num += get_line_number(subdir)
     return num
 #行数统计
-#print("\nfinal line number: "+str(get_line_number(get_file_directory())))
+print("\nfinal line number: "+str(get_line_number(get_file_directory())))
