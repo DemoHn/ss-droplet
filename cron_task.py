@@ -50,6 +50,7 @@ def start_cron_task():
     scheduler.start()
 
     return scheduler
+
 def stop_cron_task(scheduler):
     scheduler.shutdown()
 

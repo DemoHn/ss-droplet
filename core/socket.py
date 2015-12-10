@@ -148,9 +148,16 @@ def start_socket_server():
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.daemon = True
     server_thread.start()
+
+    return server
+
+def stop_socket_server(server):
+    server.shutdown()
+
 #
 # =================== CLIENT ===================
 #
+
 def send_socket_request(dest_ip,dest_port,data,type="TCP"):
     rtn = returnModel()
     dest_port = int(dest_port)
