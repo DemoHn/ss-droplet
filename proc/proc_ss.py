@@ -2,6 +2,8 @@ __author__ = 'Mingchuan'
 import os,subprocess,re
 import signal
 from string import Template
+import socket
+import json
 
 class ssProcess:
     def __doc__(self):
@@ -63,7 +65,7 @@ class ssProcess:
             ii_pid   = i_process[0]
             ii_pname = i_process[1]
 
-            if ii_pname == "ss-server":
+            if ii_pname == self.NAME:
                 process_model['pid'] = ii_pid
                 process_model['port'] = i_arr[3].split(":")[1]
                 process.append(process_model)
@@ -123,3 +125,49 @@ class ssProcess:
                 os.kill(int(pid),signal.SIGTERM)
             else:
                 print("[OUT] wrong PID")
+
+# Update 2015-12-11
+# shadowsocks-libev 大更新
+# shadowsocks-libev 最近推出了一个ss-manager的功能，这个功能使得多用户管理和流量统计再也不是问题
+# ssManagerProcess 自带UNIX socket通信方式来与ss-manager 进程通信
+class ssManagerProcess(ssProcess):
+    def __init__(self):
+        ssProcess.__init__()
+        self.NAME               = "ss-manager"
+        self.SOCK_FILE          = "/var/run/ss_manager.sock"
+        self.SS_SERVER_EXEC     = "/usr/bin/ss-server"
+
+    def createManagerProcess(self):
+        # check if ss-manager process already exists
+        status = os.path.isfile(self.SOCK_FILE)
+        if status == True:
+            return None
+        else:
+            os.unlink(self.SOCK_FILE)
+            create_text = Template("$NAME --manager-address $UNIX_ADDR --executable $SS_SERVER_EXEC &").substitute(
+                NAME = self.NAME,
+                UNIX_ADDR = self.SOCK_FILE,
+                SS_SERVER_EXEC = self.SS_SERVER_EXEC
+            )
+            print(create_text)
+            self.execOut(create_text)
+
+    def sendSocket(self,content):
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+
+        cnt = ""
+        if content == "ping":
+            cnt = content
+        else:
+            cnt = json.dumps(content)
+        sock.sendto(cnt,self.SOCK_FILE)
+
+        recv = str(sock.recv(2048),"utf-8")
+        print(recv)
+        return recv
+
+
+
+
+
+

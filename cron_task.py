@@ -19,6 +19,7 @@ def send_heart_beat_package():
     infoDB = serviceInfo()
     idfs = infoDB.checkExpiredService()
     idfs_info = []
+    # revoke expired service
     if idfs["status"] == "success":
         idfs_info = idfs["info"]
         for item in idfs_info:
@@ -36,8 +37,6 @@ def send_heart_beat_package():
         json.dumps(pack_json),
         type="UDP"
     )
-    # JUST FOR TEXT
-    print("send heart_beat at %s" % datetime.now())
 
 def start_cron_task():
     scheduler = BackgroundScheduler()
@@ -45,10 +44,9 @@ def start_cron_task():
     # add job with some rules
     # 1. send a heart_beat UDP package to declare that the server is still alive.
     #    As for the frequency... 0s or 30s per every miniute
-    scheduler.add_job(send_heart_beat_package,'cron',second="*/5")
+    scheduler.add_job(send_heart_beat_package,'cron',second="*/30")
     # start the scheudler
     scheduler.start()
-
     return scheduler
 
 def stop_cron_task(scheduler):
