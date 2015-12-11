@@ -132,7 +132,7 @@ class ssProcess:
 # ssManagerProcess 自带UNIX socket通信方式来与ss-manager 进程通信
 class ssManagerProcess(ssProcess):
     def __init__(self):
-        ssProcess.__init__()
+        ssProcess.__init__(self)
         self.NAME               = "ss-manager"
         self.SOCK_FILE          = "/var/run/ss_manager.sock"
         self.SS_SERVER_EXEC     = "/usr/bin/ss-server"
