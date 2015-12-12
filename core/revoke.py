@@ -23,16 +23,20 @@ def revoke(service_idf):
 
         if service_type == "shadowsocks":
             res = halt_shadowsocks_service(service_idf)
-            if res["status"] == "success":
-                result = inDB.deleteItem(service_idf)
-                rDB.deleteSet()
-                if result["status"] == "success":
-                    return rtn.success(200)
-                else:
-                    return result
-                # delete info in serviceInfo
+        elif service_type == "shadowsocks-obfs":
+            res = halt_shadowsocks_obfs_service(service_idf)
+        else:
+            return rtn.error(405)
+
+        if res["status"] == "success":
+            result = inDB.deleteItem(service_idf)
+            rDB.deleteSet()
+            if result["status"] == "success":
+                return rtn.success(200)
             else:
-                return res
+                return result
+        else:
+            return res
     pass
 
 def halt_shadowsocks_service(service_idf):
@@ -62,4 +66,27 @@ def halt_shadowsocks_service(service_idf):
                 # kill record in database
                 ssDB.deleteInstance(service_idf)
                 return rtn.success(200)
-    pass
+
+
+def halt_shadowsocks_obfs_service(service_idf):
+    rtn = returnModel()
+    from model.db_ss_obfs_server import ssOBFSServerDatabase
+    from proc.proc_ss import ssOBFS_Process
+    ssDB = ssOBFSServerDatabase()
+    ssProc = ssOBFS_Process()
+
+    item = ssDB.getItem(service_idf)
+
+    if item == None:
+        return rtn.error(500)
+    elif item["status"] == "error":
+        return rtn.error(item["code"])
+    else:
+        port = int(item["info"]["service_port"])
+        result = ssProc.deleteServer(port)
+        if result == False:
+            return rtn.error(450)
+        else:
+            # kill record in database
+            ssDB.deleteInstance(service_idf)
+            return rtn.success(200)

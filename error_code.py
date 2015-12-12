@@ -69,3 +69,6 @@ errcode["880"] = "HTTP commuication error"
 # bind error
 errcode["900"] = "bind account error"
 errcode["901"] = "router IDF not unique"
+
+# about server instance
+errcode["1200"] = "create ss-obfs instance failed"

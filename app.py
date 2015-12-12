@@ -34,18 +34,16 @@ def init():
     server_tcp = start_socket_server()
     print("start web listening port: "+str(config["SERVER_LISTEN_PORT"]))
 
-
     # just test proc_OBFS
     from proc.proc_ss import ssOBFS_Process
     proc = ssOBFS_Process()
-
     print(proc.createServer(15678,"naive_simple"))
 
     scheduler = start_cron_task()
 
     try:
         while True:
-            time.sleep(1)
+            time.sleep(5)
     # if the server received KILL signal, just exit
     except (KeyboardInterrupt,SystemExit):
         stop_cron_task(scheduler)

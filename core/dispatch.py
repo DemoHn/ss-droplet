@@ -5,7 +5,7 @@ from model.db_service import serviceInfo
 from utils import returnModel
 from random import randint
 import time
-# Last Edit : 2015-12-5
+# Last Edit : 2015-12-13
 # create new instance for service
 # @params
 # max_traffic : max traffic allowed
@@ -32,30 +32,45 @@ def new_service(max_traffic,max_devices,type,expire_timestamp):
         if active_num >= config["SERVICE_QUOTA"]:
             return rtn.error(421)
         else:
+            # service type switch
             if type == "shadowsocks":
                 result = start_shadowsocks()
-                if result["status"] == "error":
-                    return rtn.error(result['code'])
-                elif result['status'] == "success":
-                    # add service info
-                    service_idf = result["info"]
-                    sDB.createNewService(service_idf,max_devices,max_traffic,expire_timestamp,type)
-                    return rtn.success(result['info'])
-                else:
-                    return rtn.error(420)
+            elif type == "shadowsocks-obfs":
+                result = start_shadowsocks_obfs()
             else:
                 return rtn.error(405)
-    pass
+            # handle callback
+            if result["status"] == "error":
+                return rtn.error(result['code'])
+            elif result['status'] == "success":
+                # add service info
+                service_idf = result["info"]
+                sDB.createNewService(service_idf,max_devices,max_traffic,expire_timestamp,type)
+                return rtn.success(result['info'])
+            else:
+                return rtn.error(420)
 
 def gen_service_idf():
     loop_str = "0123456789aWcdeFEhijklmnopQrstuvwSyzZ"
-    time_int = (int(time.time()*1000) % (1000*1000)) + int(randint(100,999) * (1000*1000))
+    time_int = (int(time.time()*1000) % (1000*1000)) + int(randint(1000,9999) * (1000*1000))
     a = []
     while time_int > 0:
         a.append(loop_str[int(time_int) % 36])
         time_int = int(time_int / 36)
     a.reverse()
     return ''.join(a)
+
+def gen_password(length):
+    length = int(length)
+    str_dict = ("ABVDEXGHIJ","KLMZOPQRUT","abudefghzj","klmnopqwst","0123456789","!@?&{}[]()")
+
+    passwd_arr = []
+    for i in range(0,length):
+        dict_index = randint(0,5)
+        str_index  = randint(0,9)
+        passwd_arr.append(str_dict[dict_index][str_index])
+
+    return "".join(passwd_arr)
 
 def start_shadowsocks():
     return_data_config = {
@@ -89,7 +104,7 @@ def start_shadowsocks():
         # first generate params
         service_idf  = gen_service_idf()
         service_port = port
-        service_password = str(randint(1000,9999)) + str(randint(1000,9999))
+        service_password = gen_password(16)
         service_method = config["SS_DEFAULT_METHOD"]
         service_timeout = config["SS_DEFAULT_TIMEOUT"]
 
@@ -112,4 +127,48 @@ def start_shadowsocks():
             return_data_config["timeout"]     = service_timeout
             return_data["service_idf"]        = service_idf
             return rtn.success(return_data)
+    pass
+
+def start_shadowsocks_obfs():
+    return_data = {
+        "service_idf":"",
+        "config":""
+    }
+    rtn = returnModel()
+    from model.db_ss_obfs_server import ssOBFSServerDatabase
+    from proc.proc_ss import ssOBFS_Process
+    ssDB = ssOBFSServerDatabase()
+    ssProc = ssOBFS_Process()
+
+    port = 0
+    # lock: to prevent infinite loop (for any reason)
+    lock = 20
+    while lock > 0:
+        lock -= 1
+        rand_port = randint(config["SHADOWSOCKS_MIN_PORT"],config["SHADOWSOCKS_MAX_PORT"])
+        if ssDB.portCollision(int(rand_port)) == False:
+            port = rand_port
+            break
+
+    if port == 0:
+        return rtn.error(422)
+    else:
+        # first generate params
+        service_idf  = gen_service_idf()
+        passwd = gen_password(16)
+        res    = ssDB.insertServerInstance(service_idf,port,passwd)
+
+        if res == None:
+            return rtn.error(423)
+        elif res["status"] == "error":
+            return rtn.error(423)
+        elif res["status"] == "success":
+            result = ssProc.createServer(port,passwd)
+
+            if result == True:
+                return_data["service_idf"] = service_idf
+                return_data["config"]      = ssProc.generateLocalConfig(port,passwd)
+                return rtn.success(return_data)
+            else:
+                return rtn.error(1200)
     pass

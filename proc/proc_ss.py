@@ -201,7 +201,7 @@ class ssOBFS_Process(ssProcess):
             #'server_ipv6':"::",
             'method':"aes-256-cfb",
             'obfs':"http_simple_compatible",
-            'protocol':"auth_sha1_compatible",
+            'protocol':"",
             'obfs_param':"",
             'protocol_param':"",
             'timeout':100
@@ -239,3 +239,23 @@ class ssOBFS_Process(ssProcess):
             return traffic
         else:
             return None
+
+    def generateLocalConfig(self,port,password):
+        config_model = {
+            "server_port": "",
+            "password": "sometimes_naive",
+            "local_port": "1080",
+            "server": "0.0.0.0",
+            "method": "aes-256-cfb",
+            "protocol": "auth_sha1_compatible",
+            "obfs": "http_simple_compatible",
+            "protocol_param": "",
+            "obfs_param": "",
+            "local_address": "127.0.0.1",
+            "verbose": 0,  # 0 (or 1)
+            "timeout": 100
+        }
+
+        config_model["server_port"] = int(port)
+        config_model["password"]    = password
+        return config_model

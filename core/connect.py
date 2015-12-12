@@ -37,12 +37,17 @@ def connect(service_idf,mac_addr):
             if info["service_type"] == "shadowsocks":
                 conf_return_model["service_type"] = "shadowsocks"
                 res = get_shadowsocks_conf(service_idf)
-                if res["status"] == "error":
-                    return rtn.error(res["code"])
-                else:
-                    conf_return_model['info'] = res['info']
+            elif info["service_type"] == "shadowsocks-obfs":
+                conf_return_model["service_type"] = "shadowsocks-obfs"
+                res = get_shadowsocks_obfs_conf(service_idf)
             else:
                 return rtn.error(405)
+
+            if res["status"] == "error":
+                return rtn.error(res["code"])
+            else:
+                conf_return_model['info'] = res['info']
+
             # get conf string then return
             return rtn.success(conf_return_model)
         pass
@@ -58,3 +63,22 @@ def get_shadowsocks_conf(service_idf):
         return rtn.error(item['code'])
     else:
         return rtn.success(item['info'])
+
+
+def get_shadowsocks_obfs_conf(service_idf):
+    rtn = returnModel()
+    from model.db_ss_obfs_server import ssOBFSServerDatabase
+    from proc.proc_ss import ssOBFS_Process
+    ssOBFSProc = ssOBFS_Process()
+    ssDB = ssOBFSServerDatabase()
+    item = ssDB.getItem(service_idf)
+
+    if item == None:
+        return rtn.error(500)
+    elif item["status"] == "error":
+        return rtn.error(item['code'])
+    else:
+        port   = item["info"]["server_port"]
+        passwd = item["info"]["password"]
+        conf   = ssOBFSProc.generateLocalConfig(port,passwd)
+        return rtn.success(conf)
