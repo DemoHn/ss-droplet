@@ -87,6 +87,8 @@ class serviceInfo(Database):
             data = c.execute(expire_str)
 
             model = []
+            if data == None:
+                return self.rtn.error(620)
             for rows in data:
                 model.append(rows[0])
             return self.rtn.success(model)
