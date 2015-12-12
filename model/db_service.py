@@ -82,7 +82,7 @@ class serviceInfo(Database):
     # the term "expired" means current time if later than the expired time
     def checkExpiredService(self):
         try:
-            expire_str = "SELECT service_idf FROM service_info WHERE datetime('now') > expire_time"
+            expire_str = "SELECT service_idf FROM service_info WHERE NOW() > expire_time"
             c = self.cursor
             data = c.execute(expire_str)
 
