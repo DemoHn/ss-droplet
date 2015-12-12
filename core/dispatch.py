@@ -22,7 +22,7 @@ def new_service(max_traffic,max_devices,type,expire_timestamp):
     if max_traffic == -1 or max_traffic >= config["MMAX_TRAFFIC"]:
         max_traffic = config["MMAX_TRAFFIC"]
     if max_devices == -1 or max_traffic >= config["MMAX_DEVICES"]:
-        max_devices - config["MMAX_DEVICES"]
+        max_devices = config["MMAX_DEVICES"]
 
     if count_res == None:
         return rtn.error(420)
@@ -58,7 +58,6 @@ def gen_service_idf():
     return ''.join(a)
 
 def start_shadowsocks():
-
     return_data_config = {
         "server_port" : "",
         "password"    : "",

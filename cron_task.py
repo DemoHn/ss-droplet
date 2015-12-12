@@ -31,12 +31,13 @@ def send_heart_beat_package():
         "kill_idfs":idfs_info
     }
     # send heart_beat package
-    send_socket_request(
-        config["CONTROL_SERVER_IP"],
-        config["CONTROL_SERVER_UDP_PORT"],
-        json.dumps(pack_json),
-        type="UDP"
-    )
+    if config["CONTROL_SERVER_IP"] != "":
+        send_socket_request(
+            config["CONTROL_SERVER_IP"],
+            config["CONTROL_SERVER_UDP_PORT"],
+            json.dumps(pack_json),
+            type="UDP"
+        )
 
 def start_cron_task():
     scheduler = BackgroundScheduler()
