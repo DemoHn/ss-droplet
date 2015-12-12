@@ -16,9 +16,9 @@ class serviceInfo(Database):
         # NOTICE: start_time & expire_time are ALL UTC TIME !!!!!!!!!!!!!!
         try:
             table_str = '''CREATE TABLE IF NOT EXISTS service_info(
-            service_idf text unique,
+            service_idf varchar(64) unique,
             max_devices integer,
-            max_traffic integer,
+            max_traffic float,
             expire_time datetime,
             service_type text
             )'''
@@ -37,10 +37,10 @@ class serviceInfo(Database):
     # expire_time : it is available until this time.
     def createNewService(self,service_idf,max_devices,max_traffic,expire_timestamp,service_type):
         try:
-            add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (?,?,?,?,?)"
+            add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (%s,%d,%f,%s,%s)"
             c = self.cursor
             expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
-            c.execute(add_str,[service_idf,int(max_devices),int(max_traffic),expire_str,service_type])
+            c.execute(add_str,[service_idf,int(max_devices),float(max_traffic),expire_str,service_type])
 
             self.connection.commit()
             return self.rtn.success(200)
@@ -49,7 +49,7 @@ class serviceInfo(Database):
 
     def getItem(self,service_idf):
         try:
-            get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info WHERE service_idf = ?"
+            get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info WHERE service_idf = %s"
             c = self.cursor
             c.execute(get_str,[service_idf])
             data = c.fetchone()
@@ -70,7 +70,7 @@ class serviceInfo(Database):
 
     def deleteItem(self,service_idf):
         try:
-            del_str = "DELETE FROM service_info WHERE service_idf = ?"
+            del_str = "DELETE FROM service_info WHERE service_idf = %s"
             c = self.cursor
             c.execute(del_str,[service_idf])
             self.connection.commit()
@@ -96,7 +96,7 @@ class serviceInfo(Database):
 
     def checkDeviceLimit(self,service_idf):
         try:
-            check_str = "SELECT max_devices FROM service_info WHERE service_idf = ?"
+            check_str = "SELECT max_devices FROM service_info WHERE service_idf = %s"
             c = self.cursor
             c.execute(check_str,[service_idf])
 
@@ -110,7 +110,7 @@ class serviceInfo(Database):
 
     def checkMaxTraffic(self,service_idf):
         try:
-            check_str = "SELECT max_traffic FROM service_info WHERE service_idf = ?"
+            check_str = "SELECT max_traffic FROM service_info WHERE service_idf = %s"
             c = self.cursor
             c.execute(check_str,[service_idf])
 
@@ -141,7 +141,7 @@ class serviceInfo(Database):
         try:
             c = self.cursor
             expire_time = timeUtil.getReadableTime(expire_timestamp,0)
-            update_str = "UPDATE service_info SET expire_time = ? WHERE service_idf = ?"
+            update_str = "UPDATE service_info SET expire_time = %s WHERE service_idf = %s"
             c.execute(update_str,[expire_time,service_idf])
             self.connection.commit()
 

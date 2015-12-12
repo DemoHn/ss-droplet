@@ -1,12 +1,11 @@
-__author__ = "Mingchuan"
 #coding=utf-8
-# last edit: 2015-12-04
+# last edit: 2015-12-12
 
 from model.model import Database
 import traceback
-from utils import returnModel, timeUtil
+from utils import returnModel
 
-class ssServerDatabase(Database):
+class ssOBFSServerDatabase(Database):
     # ONLY record shadowsocks server info.
     # @param `env` specify the running environment
     # for tests, `env` = "test",
@@ -21,12 +20,10 @@ class ssServerDatabase(Database):
         # ss database table
         # NOTICE: start_time & expire_time are ALL UTC TIME !!!!!!!!!!!!!!
         try:
-            table_str = '''CREATE TABLE IF NOT EXISTS ss_server(
+            table_str = '''CREATE TABLE IF NOT EXISTS ss_obfs_server(
             service_idf VARCHAR(64) unique,
             server_port text,
-            password text,
-            method text,
-            timeout integer
+            password text
             )'''
             cursor = self.cursor
             cursor.execute(table_str)
@@ -35,21 +32,19 @@ class ssServerDatabase(Database):
             return False
         pass
 
-    # while new ss-server created, the first thing, of course is to insert a record
+    # while new ss-server (OBFS) created, the first thing, of course is to insert a record
     # into the database
 
     # @params
     # service_idf : service Identifier. It is the only ID. Generate randomly
     # server_port : shadowsocks service port
     # password    : password for shadowsocks (can be modified by user)
-    # method      : crypt method for shadowsocks (can be modified by user)
-    # timeout     : shadowsocks parameter (timeout)
-    def insertServerInstance(self,service_idf,server_port,password,method,timeout):
+    def insertServerInstance(self,service_idf,server_port,password):
         try:
-            insert_str = "INSERT INTO ss_server VALUES(%s,%s,%s,%s,%s)"
+            insert_str = "INSERT INTO ss_obfs_server VALUES(%s,%s,%s)"
 
             cursor = self.cursor
-            cursor.execute(insert_str,[service_idf,server_port,password,method,int(timeout)])
+            cursor.execute(insert_str,[service_idf,server_port,password])
             self.connection.commit()
             return self.rtn.success(200)
         except Exception as e:
@@ -59,7 +54,7 @@ class ssServerDatabase(Database):
 
     # just for debugging==========
     def _readRawData(self):
-        select_str = "SELECT * FROM ss_server"
+        select_str = "SELECT * FROM ss_obfs_server"
         c = self.cursor
         data = c.execute(select_str)
         for row in data:
@@ -68,7 +63,7 @@ class ssServerDatabase(Database):
     def getItem(self,service_idf):
         try:
             c = self.cursor
-            _str = "SELECT service_idf,server_port,password,method,timeout FROM ss_server WHERE `service_idf` = %s"
+            _str = "SELECT service_idf,server_port,password FROM ss_obfs_server WHERE `service_idf` = %s"
             data = c.execute(_str,[service_idf])
             _data = c.fetchone()
 
@@ -78,9 +73,7 @@ class ssServerDatabase(Database):
                 item = {
                     "service_idf" : _data[0],
                     "server_port" : _data[1],
-                    "password"    : _data[2],
-                    "method"      : _data[3],
-                    "timeout"     : _data[4]
+                    "password"    : _data[2]
                 }
 
                 return self.rtn.success(item)
@@ -91,7 +84,7 @@ class ssServerDatabase(Database):
     def getActiveInstance(self):
         try:
             c = self.cursor
-            _str = "SELECT serivce_idf,server_port,password,method,timeout FROM ss_server"
+            _str = "SELECT serivce_idf,server_port,password FROM ss_obfs_server"
 
             data = c.execute(_str)
             return_arr = []
@@ -99,9 +92,7 @@ class ssServerDatabase(Database):
                 item = {
                     "service_idf" : _data[0],
                     "server_port" : _data[1],
-                    "password"    : _data[2],
-                    "method"      : _data[3],
-                    "timeout"     : _data[4]
+                    "password"    : _data[2]
                 }
 
                 return_arr.append(item)
@@ -112,7 +103,7 @@ class ssServerDatabase(Database):
     def deleteInstance(self,service_idf):
         try:
             c = self.cursor
-            delete_str = "DELETE FROM ss_server WHERE service_idf = %s"
+            delete_str = "DELETE FROM ss_obfs_server WHERE service_idf = %s"
             c.execute(delete_str,[service_idf])
             self.connection.commit()
             return self.rtn.success(200)
@@ -123,7 +114,7 @@ class ssServerDatabase(Database):
     def portCollision(self,dest_port):
         try:
             c = self.cursor
-            port_str = "SELECT service_idf FROM ss_server WHERE server_port = %s"
+            port_str = "SELECT service_idf FROM ss_obfs_server WHERE server_port = %s"
             c.execute(port_str,[str(dest_port)])
             data = c.fetchone()
             if data == None:

@@ -5,7 +5,11 @@ import sys,os
 import subprocess
 import json
 dir = os.getcwd()
+dir_lib_ss = os.path.normpath(os.getcwd()+"/lib/ss_obfs")
+
 sys.path.append(dir)
+sys.path.append(dir_lib_ss)
+
 from core.socket import start_socket_server, send_socket_request , stop_socket_server
 from cron_task import start_cron_task, stop_cron_task
 from config import config

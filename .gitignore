@@ -2,3 +2,4 @@ data/ss_server.db
 log/
 .idea/
 *.pyc
+config.py

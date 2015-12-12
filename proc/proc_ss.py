@@ -2,9 +2,8 @@ __author__ = 'Mingchuan'
 import os,subprocess,re
 import signal
 from string import Template
-import socket
-import json
-
+import time
+import traceback
 class ssProcess:
     def __doc__(self):
         """
@@ -48,9 +47,9 @@ class ssProcess:
     def checkProcess(self,port=None):
         process = []
         if port == None:
-            cmd = "netstat -putan | grep LISTEN | grep ss-server"
+            cmd = "netstat -putan | grep LISTEN | grep "+self.NAME
         else:
-            cmd = "netstat -putan | grep LISTEN | grep ss-server | grep "+str(port)
+            cmd = "netstat -putan | grep LISTEN | grep "+self.NAME+" | grep "+str(port)
         info = self.execOut(cmd)
         info_arr = info.split("\n")[:-1]
 
@@ -130,11 +129,15 @@ class ssProcess:
 # shadowsocks-libev 大更新
 # shadowsocks-libev 最近推出了一个ss-manager的功能，这个功能使得多用户管理和流量统计再也不是问题
 # ssManagerProcess 自带UNIX socket通信方式来与ss-manager 进程通信
+
+# Update 2015-12-12
+# （暂时不好用）
+"""
 class ssManagerProcess(ssProcess):
     def __init__(self):
         ssProcess.__init__(self)
         self.NAME               = "ss-manager"
-        self.SOCK_FILE          = "/var/run/ss_manager.sock"
+        self.SOCK_FILE          = "/tmp/ss_manager.sock"
         self.SS_SERVER_EXEC     = "/usr/bin/ss-server"
 
     def createManagerProcess(self):
@@ -154,20 +157,85 @@ class ssManagerProcess(ssProcess):
 
     def sendSocket(self,content):
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-
-        cnt = ""
         if content == "ping":
             cnt = content
         else:
             cnt = json.dumps(content)
-        sock.sendto(cnt,self.SOCK_FILE)
+
+        sock.connect(self.SOCK_FILE)
+        # send data
+        sock.send(bytes(cnt,"utf-8"))
 
         recv = str(sock.recv(2048),"utf-8")
         print(recv)
         return recv
+"""
 
+# shadowsocks RSS
+# see : https://github.com/breakwa11/shadowsocks-rss for more details
+# This python library has been integrated in lib/ss_obfs/
+# with traffic stat and obfs mixin.
+#
+# DemoHn
+# 2015-12-12
+# library code :
+class ssOBFS_Process(ssProcess):
 
+    def __init__(self):
+        ssProcess.__init__(self)
+        self.server_pool = None
+        self.startControlProcess()
+        pass
 
+    def startControlProcess(self):
+        from lib.ss_obfs.server_pool import ServerPool
 
+        # default config
+        # if use ss_OBFS, that means all instances have the same timeout, server, encrypt method,
+        # obfs params and protocol params
 
+        ip_address = self.getIP()
 
+        # change the config if necessary
+        default_config = {
+            "server":ip_address,
+            'server_ipv6':"::",
+            'method':"aes-256-cfb",
+            'obfs':"http_simple_compatible",
+            'protocol':"auth_sha1_compatible",
+            'obfs_param':"",
+            'protocol_param':"",
+            'timeout':100
+        }
+        try:
+            pool = ServerPool(default_config)
+            self.server_pool = pool
+        except Exception as e:
+            traceback.print_exc()
+
+    def createServer(self,port,password):
+        if self.server_pool != None:
+            self.server_pool.new_server(port,password)
+            return self.server_pool.server_run_status(port)
+        else:
+            return None
+
+    def deleteServer(self,port):
+        if self.server_pool != None:
+            self.server_pool.del_server(port)
+            return (not self.server_pool.server_run_status(port))
+        else:
+            return None
+
+    def getTraffic(self,port):
+        traffic = {
+            "upload":0,
+            "download":0
+        }
+        if self.server_pool != None:
+            traffic_arr = self.server_pool.get_server_transfer(port)
+            traffic["upload"] = traffic_arr[0]
+            traffic["download"] = traffic_arr[1]
+            return traffic
+        else:
+            return None
