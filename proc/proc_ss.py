@@ -132,7 +132,7 @@ class ssProcess:
 # ssManagerProcess 自带UNIX socket通信方式来与ss-manager 进程通信
 class ssManagerProcess(ssProcess):
     def __init__(self):
-        ssProcess.__init__()
+        ssProcess.__init__(self)
         self.NAME               = "ss-manager"
         self.SOCK_FILE          = "/var/run/ss_manager.sock"
         self.SS_SERVER_EXEC     = "/usr/bin/ss-server"
@@ -143,13 +143,11 @@ class ssManagerProcess(ssProcess):
         if status == True:
             return None
         else:
-            os.unlink(self.SOCK_FILE)
             create_text = Template("$NAME --manager-address $UNIX_ADDR --executable $SS_SERVER_EXEC &").substitute(
                 NAME = self.NAME,
                 UNIX_ADDR = self.SOCK_FILE,
                 SS_SERVER_EXEC = self.SS_SERVER_EXEC
             )
-            print(create_text)
             self.execOut(create_text)
 
     def sendSocket(self,content):
@@ -160,8 +158,10 @@ class ssManagerProcess(ssProcess):
             cnt = content
         else:
             cnt = json.dumps(content)
-        sock.sendto(cnt,self.SOCK_FILE)
 
+        sock.connect(self.SOCK_FILE)
+        sock.send(cnt)
+        sock.close()
         recv = str(sock.recv(2048),"utf-8")
         print(recv)
         return recv
