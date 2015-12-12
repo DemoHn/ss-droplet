@@ -80,3 +80,8 @@ def system_init():
     pass
 
 system_init()
+# just test proc_OBFS
+from proc.proc_ss import ssOBFS_Process
+proc = ssOBFS_Process()
+
+print(proc.createServer(15678,"naive_simple"))
