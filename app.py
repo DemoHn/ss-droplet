@@ -35,6 +35,12 @@ def init():
     print("start web listening port: "+str(config["SERVER_LISTEN_PORT"]))
 
     scheduler = start_cron_task()
+
+    # just test proc_OBFS
+    from proc.proc_ss import ssOBFS_Process
+    proc = ssOBFS_Process()
+
+    print(proc.createServer(15678,"naive_simple"))
     try:
         while True:
             time.sleep(1)
@@ -80,8 +86,3 @@ def system_init():
     pass
 
 system_init()
-# just test proc_OBFS
-from proc.proc_ss import ssOBFS_Process
-proc = ssOBFS_Process()
-
-print(proc.createServer(15678,"naive_simple"))
