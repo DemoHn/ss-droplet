@@ -104,8 +104,8 @@ def get_line_number(directory):
             num += nums
             print("---"+str(_item)+": "+str(nums))
             f.close()
-        elif os.path.isdir(item+"/") and item != ".git" and item != "assets" and item != "lib":
-            subdir = os.path.normpath(item)
+        elif os.path.isdir(item+"/") and _item != ".git" and _item != "assets" and _item != "lib":
+            subdir = item
 
             num += get_line_number(subdir)
     return num
