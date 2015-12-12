@@ -66,7 +66,6 @@ class ServerPool(object):
             "password": "naive",
             "local_port": "1080",
             "server": "0.0.0.0",
-            "server_ipv6":"::",
             "method": "aes-256-cfb",
             "protocol": "auth_sha1_compatible",
             "obfs": "http_simple_compatible",

@@ -198,7 +198,7 @@ class ssOBFS_Process(ssProcess):
         # change the config if necessary
         default_config = {
             "server":ip_address,
-            'server_ipv6':"::",
+            #'server_ipv6':"::",
             'method':"aes-256-cfb",
             'obfs':"http_simple_compatible",
             'protocol':"auth_sha1_compatible",
