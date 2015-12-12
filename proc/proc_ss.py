@@ -214,6 +214,7 @@ class ssOBFS_Process(ssProcess):
 
     def createServer(self,port,password):
         if self.server_pool != None:
+            print("test-new-server")
             self.server_pool.new_server(port,password)
             return self.server_pool.server_run_status(port)
         else:

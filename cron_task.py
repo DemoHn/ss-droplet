@@ -19,12 +19,17 @@ def send_heart_beat_package():
     infoDB = serviceInfo()
     idfs = infoDB.checkExpiredService()
     idfs_info = []
+
+    if idfs == None:
+        return None
     # revoke expired service
-    if idfs["status"] == "success":
+    elif idfs["status"] == "success":
         idfs_info = idfs["info"]
         for item in idfs_info:
             revoke(item)
             time.sleep(0.2)
+    elif idfs["status"] == "error":
+        return None
 
     pack_json = {
         "command":"heart_beat",
