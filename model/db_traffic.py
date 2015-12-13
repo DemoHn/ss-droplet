@@ -41,7 +41,7 @@ class serviceTraffic(Database):
     # (reset the traffic to 300MB on the first day of every month)
     def createNewTraffic(self,service_idf,traffic_strategy):
         try:
-            add_str = "INSERT INTO service_traffic (service_idf,upload_traffic,download_traffic,traffic_strategy) VALUES (%s,%f,%f,%s)"
+            add_str = "INSERT INTO service_traffic (service_idf,upload_traffic,download_traffic,traffic_strategy) VALUES (%s,%s,%s,%s)"
             c = self.cursor
 
             INIT_UPLOAD_TRAFFIC   = 0.0
@@ -87,7 +87,7 @@ class serviceTraffic(Database):
     # NOTICE : unit is MB!!!!!!!!!!
     def updateTraffic(self,service_idf,new_upload_traffic,new_download_traffic):
         try:
-            update_str = "UPDATE service_traffic SET upload_traffic = %f, download_traffic = %f WHERE service_idf = %s"
+            update_str = "UPDATE service_traffic SET upload_traffic = %s, download_traffic = %s WHERE service_idf = %s"
             c = self.cursor
             u_t = round(float(new_upload_traffic),1)
             d_t = round(float(new_download_traffic),1)
@@ -107,8 +107,11 @@ class serviceTraffic(Database):
             c = self.cursor
             data = c.execute(get_str)
             rtn_arr = []
-            for rows in data:
-                rtn_arr.append(rows[0])
+            if data == None:
+                return self.rtn.error(620)
+            else:
+                for rows in data:
+                    rtn_arr.append(rows[0])
 
             return self.rtn.success(rtn_arr)
         except Exception as e:
@@ -148,7 +151,7 @@ class serviceTraffic(Database):
     def resetZero(self,service_idf):
         try:
             c = self.cursor
-            reset_str = "UDPATE service_traffic SET upload_traffic = %f, download_traffic = %f WHERE service_idf = %s"
+            reset_str = "UDPATE service_traffic SET upload_traffic = %s, download_traffic = %s WHERE service_idf = %s"
             c.execute(reset_str,[0.0,0.0,service_idf])
             self.connection.commit()
             return self.rtn.success(200)
