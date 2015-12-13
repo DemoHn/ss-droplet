@@ -42,3 +42,5 @@ config["REDIS_HOST"] = "127.0.0.1"
 config["MYSQL_CONNECTION_IP"] = "127.0.0.1"
 config["MYSQL_USER"] = "root"
 config["MYSQL_PASSWORD"] = "" # your mysql password
+
+config["SEND_HEARTBEAT_PACK"] = True

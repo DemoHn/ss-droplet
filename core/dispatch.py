@@ -12,7 +12,7 @@ import time
 # max_devices : max devices allowed
 # type        : instance type (only SHADOWSOCKS is available till now)
 # expire_timestamp : expire time of this service(UTC). After that time, the instance will revoke automatically
-def new_service(max_traffic,max_devices,type,expire_timestamp):
+def new_service(max_traffic,max_devices,type,expire_timestamp,strategy=""):
     # first get active service nums
     sDB = serviceInfo()
     rtn = returnModel()
@@ -36,7 +36,7 @@ def new_service(max_traffic,max_devices,type,expire_timestamp):
             if type == "shadowsocks":
                 result = start_shadowsocks()
             elif type == "shadowsocks-obfs":
-                result = start_shadowsocks_obfs()
+                result = start_shadowsocks_obfs(strategy)
             else:
                 return rtn.error(405)
             # handle callback
@@ -129,17 +129,18 @@ def start_shadowsocks():
             return rtn.success(return_data)
     pass
 
-def start_shadowsocks_obfs():
+def start_shadowsocks_obfs(traffic_strategy):
     return_data = {
         "service_idf":"",
         "config":""
     }
     rtn = returnModel()
     from model.db_ss_obfs_server import ssOBFSServerDatabase
+    from model.db_traffic import serviceTraffic
     from proc.proc_ss import ssOBFS_Process
     ssDB = ssOBFSServerDatabase()
     ssProc = ssOBFS_Process()
-
+    ssT    = serviceTraffic()
     port = 0
     # lock: to prevent infinite loop (for any reason)
     lock = 20
@@ -164,7 +165,7 @@ def start_shadowsocks_obfs():
             return rtn.error(423)
         elif res["status"] == "success":
             result = ssProc.createServer(port,passwd)
-
+            ssT.createNewTraffic(service_idf,traffic_strategy)
             if result == True:
                 return_data["service_idf"] = service_idf
                 return_data["config"]      = ssProc.generateLocalConfig(port,passwd)

@@ -71,9 +71,11 @@ def halt_shadowsocks_service(service_idf):
 def halt_shadowsocks_obfs_service(service_idf):
     rtn = returnModel()
     from model.db_ss_obfs_server import ssOBFSServerDatabase
+    from model.db_traffic import serviceTraffic
     from proc.proc_ss import ssOBFS_Process
     ssDB = ssOBFSServerDatabase()
     ssProc = ssOBFS_Process()
+    trafficDB = serviceTraffic()
 
     item = ssDB.getItem(service_idf)
 
@@ -89,4 +91,5 @@ def halt_shadowsocks_obfs_service(service_idf):
         else:
             # kill record in database
             ssDB.deleteInstance(service_idf)
+            trafficDB.deleteItem(service_idf)
             return rtn.success(200)

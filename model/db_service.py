@@ -68,6 +68,30 @@ class serviceInfo(Database):
         except Exception as e:
             traceback.print_exc()
 
+    def getItems(self):
+        try:
+            get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info"
+            c = self.cursor
+            c.execute(get_str)
+            data = c.fetchone()
+            model_arr = []
+            if data == None:
+                return self.rtn.error(520)
+            else:
+                for rows in data:
+                    model = {
+                        "service_idf" : rows[0],
+                        "max_devices" : rows[1],
+                        "max_traffic" : rows[2],
+                        "expire_time" : rows[3],
+                        "service_type": rows[4]
+                    }
+
+                    model_arr.append(model)
+                return self.rtn.success(model_arr)
+        except Exception as e:
+            traceback.print_exc()
+
     def deleteItem(self,service_idf):
         try:
             del_str = "DELETE FROM service_info WHERE service_idf = %s"
@@ -147,6 +171,18 @@ class serviceInfo(Database):
             c.execute(update_str,[expire_time,service_idf])
             self.connection.commit()
 
+            return self.rtn.success(200)
+        except Exception as e:
+            traceback.print_exc()
+
+    def resetTraffic(self,service_idf,traffic):
+        try:
+            traffic = float(traffic)
+            c = self.cursor
+            update_str = "UPDATE service_info SET max_traffic = %f WHERE service_idf = %s"
+            c.execute(update_str,[traffic,service_idf])
+
+            self.connection.commit()
             return self.rtn.success(200)
         except Exception as e:
             traceback.print_exc()

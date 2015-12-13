@@ -222,7 +222,7 @@ class ssOBFS_Process(ssProcess):
 
     def deleteServer(self,port):
         if self.server_pool != None:
-            self.server_pool.del_server(port)
+            self.server_pool.cb_del_server(port)
             return (not self.server_pool.server_run_status(port))
         else:
             return None

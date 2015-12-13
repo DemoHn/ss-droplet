@@ -2,6 +2,8 @@
 from model.model import Database
 from utils import returnModel, timeUtil
 import traceback
+from string import Template
+import re
 
 class serviceTraffic(Database):
     def __init__(self,env="normal"):
@@ -109,5 +111,46 @@ class serviceTraffic(Database):
                 rtn_arr.append(rows[0])
 
             return self.rtn.success(rtn_arr)
+        except Exception as e:
+            traceback.print_exc()
+
+    def getTrafficInstancesByStrategy(self,strategy_name):
+        try:
+            # BE REALLY CAREFUL ABOUT SQL INJECTION!!!!
+            # check if the strategy_name only contains characters and end with "Strategy"
+            re_str = "^[a-zA-Z]+Strategy$"
+            re_exp = re.compile(re_str)
+            res = re_exp.match(strategy_name)
+
+            if res == None:
+                return self.rtn.error(500)
+            else:
+                sel_str = Template("SELECT service_idf, service_strategy FROM service_traffic WHERE `service_stategy` LIKE '%$strategy_name%'").substitute(
+                    strategy_name = strategy_name
+                )
+
+                c = self.cursor
+                data = c.execute(sel_str)
+                data_model = []
+                if data == None:
+                    return self.rtn.success([])
+                else:
+                    for rows in data:
+                        info = {
+                            "service_idf" : rows[0],
+                            "service_strategy": rows[1]
+                        }
+                        data_model.append(info)
+                    return self.rtn.success(data_model)
+        except Exception as e:
+            traceback.print_exc()
+
+    def resetZero(self,service_idf):
+        try:
+            c = self.cursor
+            reset_str = "UDPATE service_traffic SET upload_traffic = %f, download_traffic = %f WHERE service_idf = %s"
+            c.execute(reset_str,[0.0,0.0,service_idf])
+            self.connection.commit()
+            return self.rtn.success(200)
         except Exception as e:
             traceback.print_exc()

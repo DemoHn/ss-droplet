@@ -47,10 +47,10 @@ class recvServer(socketserver.BaseRequestHandler):
     #
     # COMMAND LIST
     # 1) "ping" : just test if the server is OK. return "pong"
-    # 2) "new" @params : "info":{ "max_traffic","max_devices","expire_timestamp","type"}
-    # 3) "connect" @params: "mac_addr","service_idf"
-    # 4) "revoke" @params : "service_idf"
-    # 5) "postpone" @params: "service_idf","postpone_timestamp"
+    # 2) "new" @params : "from","info":{ "max_traffic","max_devices","expire_timestamp","type","traffic_strategy"}
+    # 3) "connect" @params: "from","mac_addr","service_idf"
+    # 4) "revoke" @params : "from","service_idf"
+    # 5) "postpone" @params: "from","service_idf","postpone_timestamp"
     def handle(self):
         data = str(self.request.recv(1024).strip(), 'utf-8')
         try:
@@ -69,8 +69,9 @@ class recvServer(socketserver.BaseRequestHandler):
                     max_traffic = json_data["info"]["max_traffic"]
                     max_devices = json_data["info"]["max_devices"]
                     expire_timestamp = json_data["info"]["expire_timestamp"]
+                    traffic_strategy = json_data["info"]["traffic_strategy"]
                     type = json_data["info"]["type"]
-                    dispatch_result = new_service(max_traffic,max_devices,type,expire_timestamp)
+                    dispatch_result = new_service(max_traffic,max_devices,type,expire_timestamp,strategy=traffic_strategy)
 
                     if dispatch_result == None:
                         return self.sendSocket("error",500)

@@ -110,4 +110,4 @@ def get_line_number(directory):
             num += get_line_number(subdir)
     return num
 #行数统计
-print("\nfinal line number: "+str(get_line_number(get_file_directory())))
+#print("\nfinal line number: "+str(get_line_number(get_file_directory())))
