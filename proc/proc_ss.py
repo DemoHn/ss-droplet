@@ -247,7 +247,7 @@ class ssOBFS_Process(ssProcess):
             "local_port": "1080",
             "server": "0.0.0.0",
             "method": "aes-256-cfb",
-            "protocol": "auth_sha1_compatible",
+            "protocol": "",
             "obfs": "http_simple_compatible",
             "protocol_param": "",
             "obfs_param": "",

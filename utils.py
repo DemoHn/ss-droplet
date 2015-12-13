@@ -20,16 +20,14 @@ class timeUtil:
     def getCurrentUTCtimestamp():
         # get timestamp
         # time.timezone represents for the seconds that current timestamp delayed
-        return int(time.time()) + int(time.timezone)
+        return datetime.utcnow().timestamp()
 
     @staticmethod
     def getReadableTime(utc_timestamp,timezone):
         # final string e.g: 2015-10-12 17:39
-        # here, timezone means hours before UTC
-        # e.g: CST <--> +8
-        _timestamp = int(utc_timestamp) + int(timezone)*3600
+        local_timestamp = int(utc_timestamp) + int(timezone)*3600
+        return datetime.fromtimestamp(local_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
-        return datetime.fromtimestamp(_timestamp).strftime("%Y-%m-%d %H:%M:%s")
 
     @staticmethod
     def getUTCtimestamp(readable_time,timezone):
