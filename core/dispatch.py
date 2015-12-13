@@ -44,7 +44,7 @@ def new_service(max_traffic,max_devices,type,expire_timestamp,strategy=""):
                 return rtn.error(result['code'])
             elif result['status'] == "success":
                 # add service info
-                service_idf = result["info"]
+                service_idf = result["info"]["service_idf"]
                 sDB.createNewService(service_idf,max_devices,max_traffic,expire_timestamp,type)
                 return rtn.success(result['info'])
             else:
