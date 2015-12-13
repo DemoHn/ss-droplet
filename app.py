@@ -5,7 +5,7 @@ import sys,os
 import subprocess
 import json
 dir = os.getcwd()
-dir_lib_ss = os.path.normpath(os.getcwd()+"/lib/ss_obfs")
+dir_lib_ss = os.path.normpath(os.getcwd()+"/lib/shadowsocks")
 
 sys.path.append(dir)
 sys.path.append(dir_lib_ss)

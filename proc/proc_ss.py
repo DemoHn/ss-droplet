@@ -182,6 +182,7 @@ class ssOBFS_Process(ssProcess):
 
     def __init__(self):
         ssProcess.__init__(self)
+        self._overwrite_config()
         self.server_pool = None
         self.startControlProcess()
         pass
@@ -207,7 +208,7 @@ class ssOBFS_Process(ssProcess):
             'timeout':100
         }
         try:
-            pool = ServerPool(default_config)
+            pool = ServerPool()
             self.server_pool = pool
         except Exception as e:
             traceback.print_exc()
@@ -240,6 +241,42 @@ class ssOBFS_Process(ssProcess):
         else:
             return None
 
+    def _overwrite_config(self):
+        conf_file = os.path.normpath(os.getcwd()+"/lib/ss_obfs/config.json")
+        try:
+            file  = open(conf_file,"wb+")
+
+            if self.getIP() == None:
+                server_ip = "0.0.0.0"
+            else:
+                server_ip = self.getIP()
+
+            __overwrite_content = Template('''\
+{
+    "server": "$SERVER_IP",
+    "server_ipv6": "::",
+    "server_port": 8388,
+    "local_address": "127.0.0.1",
+    "local_port": 1080,
+    "password": "m",
+    "timeout": 120,
+    "method": "aes-256-cfb",
+    "protocol": "auth_sha1_compatible",
+    "protocol_param": "",
+    "obfs": "http_simple_compatible",
+    "obfs_param": "",
+    "dns_ipv6": false,
+    "fast_open": false,
+    "workers": 1
+}''').substitute(
+                SERVER_IP = server_ip
+            )
+
+            file.write(__overwrite_content)
+            file.close()
+
+        except Exception as e:
+            traceback.print_exc()
     def generateLocalConfig(self,port,password):
         config_model = {
             "server_port": "",
