@@ -39,7 +39,7 @@ class serviceInfo(Database):
             add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (%s,%s,%s,%s,%s)"
             c = self.cursor
             expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
-            print(service_type)
+            print(service_idf)
             print(expire_str)
             c.execute(add_str,[service_idf,int(max_devices),float(max_traffic),expire_str,service_type])
 
