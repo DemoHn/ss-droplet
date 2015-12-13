@@ -70,8 +70,8 @@ class recvServer(socketserver.BaseRequestHandler):
                     max_devices = json_data["info"]["max_devices"]
                     expire_timestamp = json_data["info"]["expire_timestamp"]
                     traffic_strategy = json_data["info"]["traffic_strategy"]
-                    type = json_data["info"]["type"]
-                    dispatch_result = new_service(max_traffic,max_devices,type,expire_timestamp,strategy=traffic_strategy)
+                    service_type = json_data["info"]["type"]
+                    dispatch_result = new_service(max_traffic,max_devices,service_type,expire_timestamp,strategy=traffic_strategy)
 
                     if dispatch_result == None:
                         return self.sendSocket("error",500)
@@ -80,9 +80,9 @@ class recvServer(socketserver.BaseRequestHandler):
                     else:
                         # return service_idf and expire_date
                         rtn_model = {
-                            "expire_timestamp": expire_timestamp,
+                            "expire_timestamp": int(expire_timestamp),
                             "service_idf"     : dispatch_result["info"]["service_idf"],
-                            "conf_content"    : dispatch_result["info"]["config"]
+                            "config"          : dispatch_result["info"]["config"]
                         }
                         return self.sendSocket("success",rtn_model)
                 else:

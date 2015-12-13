@@ -183,7 +183,7 @@ class ssOBFS_Process(ssProcess):
 
     def __init__(self):
         ssProcess.__init__(self)
-
+        self.server_ip = "0.0.0.0"
         self.default_config = {
             "method" :"aes-256-cfb",
             "protocol":"auth_sha1_compatible",
@@ -219,11 +219,10 @@ class ssOBFS_Process(ssProcess):
         conf_file = os.path.normpath(os.getcwd()+"/lib/ss_obfs/config.json")
         try:
             file  = open(conf_file,"w+")
-
             if self.getIP() == None:
-                server_ip = "0.0.0.0"
+                self.server_ip = "0.0.0.0"
             else:
-                server_ip = self.getIP()
+                self.server_ip = self.getIP()
 
             __overwrite_content = Template('''\
 {
@@ -242,7 +241,7 @@ class ssOBFS_Process(ssProcess):
     "fast_open": true,
     "workers": 3
 }''').substitute(
-                SERVER_IP = server_ip,
+                SERVER_IP = self.server_ip,
                 METHOD    = self.default_config["method"],
                 PROTOCOL  = self.default_config["protocol"],
                 PROTOCOL_PARAM = self.default_config["protocol_param"],
@@ -257,10 +256,10 @@ class ssOBFS_Process(ssProcess):
             traceback.print_exc()
     def generateLocalConfig(self,port,password):
         config_model = {
-            "server_port": "",
-            "password": "sometimes_naive",
+            "server_port": int(port),
+            "password": password,
             "local_port": "1080",
-            "server": "0.0.0.0",
+            "server": self.server_ip,
             "method": self.default_config["method"],
             "protocol": self.default_config["protocol"],
             "obfs": self.default_config["obfs"],
@@ -270,6 +269,4 @@ class ssOBFS_Process(ssProcess):
             "timeout": 100
         }
 
-        config_model["server_port"] = int(port)
-        config_model["password"]    = password
         return config_model

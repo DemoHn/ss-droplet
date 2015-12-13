@@ -62,11 +62,11 @@ def gen_service_idf():
 
 def gen_password(length):
     length = int(length)
-    str_dict = ("ABVDEXGHIJ","KLMZOPQRUT","abudefghzj","klmnopqwst","0123456789","!@?&{}[]()")
+    str_dict = ("ABVDEXGHIJ","KLMZOPQRUT","abudefghzj","klmnopqwst","0123456789","0123456789","0123456789","!@?&{}[|])")
 
     passwd_arr = []
     for i in range(0,length):
-        dict_index = randint(0,5)
+        dict_index = randint(0,7)
         str_index  = randint(0,9)
         passwd_arr.append(str_dict[dict_index][str_index])
 
@@ -81,6 +81,7 @@ def start_shadowsocks():
     }
 
     return_data = {
+
         "service_idf":"",
         "config":return_data_config
     }
