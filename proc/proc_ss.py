@@ -244,7 +244,7 @@ class ssOBFS_Process(ssProcess):
     def _overwrite_config(self):
         conf_file = os.path.normpath(os.getcwd()+"/lib/ss_obfs/config.json")
         try:
-            file  = open(conf_file,"wb+")
+            file  = open(conf_file,"w+")
 
             if self.getIP() == None:
                 server_ip = "0.0.0.0"
