@@ -183,30 +183,17 @@ class ssOBFS_Process(ssProcess):
 
     def __init__(self):
         ssProcess.__init__(self)
+
+        self.default_config = {
+            "method" :"aes-256-cfb",
+            "protocol":"auth_sha1_compatible",
+            "protocol_param":"",
+            "obfs":"http_simple_compatible",
+            "obfs_param":""
+        }
         self._overwrite_config()
-        self.startControlProcess()
         pass
 
-    def startControlProcess(self):
-
-
-        # default config
-        # if use ss_OBFS, that means all instances have the same timeout, server, encrypt method,
-        # obfs params and protocol params
-
-        ip_address = self.getIP()
-
-        # change the config if necessary
-        default_config = {
-            "server":ip_address,
-            #'server_ipv6':"::",
-            'method':"aes-256-cfb",
-            'obfs':"http_simple_compatible",
-            'protocol':"",
-            'obfs_param':"",
-            'protocol_param':"",
-            'timeout':100
-        }
 
     def createServer(self,port,password):
             print("test-new-server")
@@ -244,18 +231,23 @@ class ssOBFS_Process(ssProcess):
     "server_port": 8388,
     "local_address": "127.0.0.1",
     "local_port": 1080,
-    "password": "m",
+    "password": "naive",
     "timeout": 120,
-    "method": "aes-256-cfb",
-    "protocol": "auth_sha1_compatible",
-    "protocol_param": "",
-    "obfs": "http_simple_compatible",
-    "obfs_param": "",
+    "method": "$METHOD",
+    "protocol": "$PROTOCOL",
+    "protocol_param": "$PROTOCOL_PARAM",
+    "obfs": "$OBFS",
+    "obfs_param": "$OBFS_PARAM",
     "dns_ipv6": false,
-    "fast_open": false,
-    "workers": 1
+    "fast_open": true,
+    "workers": 3
 }''').substitute(
-                SERVER_IP = server_ip
+                SERVER_IP = server_ip,
+                METHOD    = self.default_config["method"],
+                PROTOCOL  = self.default_config["protocol"],
+                PROTOCOL_PARAM = self.default_config["protocol_param"],
+                OBFS           = self.default_config["obfs"],
+                OBFS_PARAM     = self.default_config["obfs_param"]
             )
 
             file.write(__overwrite_content)
@@ -269,13 +261,12 @@ class ssOBFS_Process(ssProcess):
             "password": "sometimes_naive",
             "local_port": "1080",
             "server": "0.0.0.0",
-            "method": "aes-256-cfb",
-            "protocol": "",
-            "obfs": "http_simple_compatible",
-            "protocol_param": "",
-            "obfs_param": "",
+            "method": self.default_config["method"],
+            "protocol": self.default_config["protocol"],
+            "obfs": self.default_config["obfs"],
+            "protocol_param": self.default_config["protocol_param"],
+            "obfs_param": self.default_config["obfs_param"],
             "local_address": "127.0.0.1",
-            "verbose": 0,  # 0 (or 1)
             "timeout": 100
         }
 

@@ -1,4 +1,3 @@
-__author__ = 'Mingchuan'
 # Last Edit: 2015-12-4
 from model.model import Database
 from utils import returnModel, timeUtil
@@ -37,7 +36,7 @@ class serviceInfo(Database):
     # expire_time : it is available until this time.
     def createNewService(self,service_idf,max_devices,max_traffic,expire_timestamp,service_type):
         try:
-            add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (%s,%d,%f,%s,%s)"
+            add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (%s,%s,%s,%s,%s)"
             c = self.cursor
             expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
             c.execute(add_str,[service_idf,int(max_devices),float(max_traffic),expire_str,service_type])
@@ -179,7 +178,7 @@ class serviceInfo(Database):
         try:
             traffic = float(traffic)
             c = self.cursor
-            update_str = "UPDATE service_info SET max_traffic = %f WHERE service_idf = %s"
+            update_str = "UPDATE service_info SET max_traffic = %s WHERE service_idf = %s"
             c.execute(update_str,[traffic,service_idf])
 
             self.connection.commit()
