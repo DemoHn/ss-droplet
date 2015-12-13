@@ -4,6 +4,7 @@ import signal
 from string import Template
 import time
 import traceback
+from lib.ss_obfs.server_pool import ServerPool
 class ssProcess:
     def __doc__(self):
         """
@@ -183,12 +184,11 @@ class ssOBFS_Process(ssProcess):
     def __init__(self):
         ssProcess.__init__(self)
         self._overwrite_config()
-        self.server_pool = None
         self.startControlProcess()
         pass
 
     def startControlProcess(self):
-        from lib.ss_obfs.server_pool import ServerPool
+
 
         # default config
         # if use ss_OBFS, that means all instances have the same timeout, server, encrypt method,
@@ -207,39 +207,26 @@ class ssOBFS_Process(ssProcess):
             'protocol_param':"",
             'timeout':100
         }
-        try:
-            pool = ServerPool()
-            self.server_pool = pool
-        except Exception as e:
-            traceback.print_exc()
 
     def createServer(self,port,password):
-        if self.server_pool != None:
             print("test-new-server")
-            self.server_pool.new_server(port,password)
-            return self.server_pool.server_run_status(port)
-        else:
-            return None
+            ServerPool.get_instance().new_server(port,password)
+            return ServerPool.get_instance().server_run_status(port)
+
 
     def deleteServer(self,port):
-        if self.server_pool != None:
-            self.server_pool.cb_del_server(port)
-            return (not self.server_pool.server_run_status(port))
-        else:
-            return None
+            ServerPool.get_instance().cb_del_server(port)
+            return (not ServerPool.get_instance().server_run_status(port))
 
     def getTraffic(self,port):
         traffic = {
             "upload":0,
             "download":0
         }
-        if self.server_pool != None:
-            traffic_arr = self.server_pool.get_server_transfer(port)
-            traffic["upload"] = traffic_arr[0]
-            traffic["download"] = traffic_arr[1]
-            return traffic
-        else:
-            return None
+        traffic_arr = ServerPool.get_instance().get_server_transfer(port)
+        traffic["upload"] = traffic_arr[0]
+        traffic["download"] = traffic_arr[1]
+        return traffic
 
     def _overwrite_config(self):
         conf_file = os.path.normpath(os.getcwd()+"/lib/ss_obfs/config.json")
