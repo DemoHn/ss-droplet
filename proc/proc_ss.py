@@ -241,7 +241,6 @@ class ssOBFS_Process(ssProcess):
             __overwrite_content = Template('''\
 {
     "server": "$SERVER_IP",
-    "server_ipv6": "::",
     "server_port": 8388,
     "local_address": "127.0.0.1",
     "local_port": 1080,
