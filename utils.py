@@ -26,8 +26,7 @@ class timeUtil:
     def getReadableTime(utc_timestamp,timezone):
         # final string e.g: 2015-10-12 17:39
         local_timestamp = int(utc_timestamp) + int(timezone)*3600
-        return datetime.fromtimestamp(local_timestamp).strftime("%Y-%m-%d %H:%M:%S")
-
+        return datetime.utcfromtimestamp(local_timestamp).strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
     def getUTCtimestamp(readable_time,timezone):
