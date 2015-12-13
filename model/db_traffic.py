@@ -100,7 +100,7 @@ class serviceTraffic(Database):
     # if traffic exceeds, then pick the service_idf up and shutdown it
     def getExceedTrafficService(self):
         try:
-            get_str = "SELECT service_idf FROM service_traffic INNER JOIN service_info \
+            get_str = "SELECT service_traffic.service_idf FROM service_traffic INNER JOIN service_info \
                        ON service_info.service_idf = service_traffic.service_idf WHERE \
                        (service_traffic.upload_traffic + service_traffic.download_traffic) > service_info.max_traffic"
 
