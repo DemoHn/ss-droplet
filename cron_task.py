@@ -26,6 +26,24 @@ def send_heart_beat_package():
     exceed_info = []
     idfs_info   = []
 
+    # update traffic of all services
+    update_traffic()
+
+    # send heart_beat package
+    pack_json = {
+        "command":"heart_beat",
+        "expire_idfs":idfs_info,
+        "traffic_exceed_idfs":exceed_info
+    }
+
+    if config["CONTROL_SERVER_IP"] != "": #and config["SEND_HEARTBEAT_PACK"] == True:
+        send_socket_request(
+            config["CONTROL_SERVER_IP"],
+            config["CONTROL_SERVER_UDP_PORT"],
+            json.dumps(pack_json),
+            type="UDP"
+        )
+
     if idfs == None or exceed == None:
         return None
     # revoke expired service
@@ -43,22 +61,6 @@ def send_heart_beat_package():
         print(exceed_info)
     else:
         return None
-    # update traffic of all services
-    update_traffic()
-    # send heart_beat package
-    pack_json = {
-        "command":"heart_beat",
-        "expire_idfs":idfs_info,
-        "traffic_exceed_idfs":exceed_info
-    }
-
-    if config["CONTROL_SERVER_IP"] != "": #and config["SEND_HEARTBEAT_PACK"] == True:
-        send_socket_request(
-            config["CONTROL_SERVER_IP"],
-            config["CONTROL_SERVER_UDP_PORT"],
-            json.dumps(pack_json),
-            type="UDP"
-        )
 
 def reset_traffic(strategy_name):
     def split_traffic_strategy(strategy_str):
