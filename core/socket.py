@@ -9,6 +9,8 @@ from core.connect import connect
 from core.revoke import revoke
 from core.postpone import postpone
 import json
+
+from model.db_traffic import serviceTraffic
 # socket server
 # using TCP protocol
 # and it is asynchronous
@@ -133,7 +135,15 @@ class recvServer(socketserver.BaseRequestHandler):
                         return self.sendSocket("success",200)
                 else:
                     return self.sendSocket("error",402)
-
+            # get real time traffic (debug)
+            elif json_data["command"] == "__get_traffic":
+                if json_data["from"] == "host":
+                    service_idf     = json_data["service_idf"]
+                    trafficDB       = serviceTraffic()
+                    traffic         = trafficDB.getTraffic(service_idf)
+                    return self.sendSocket("success",traffic["info"])
+                else:
+                    return self.sendSocket("error",402)
             else:
                 return self.sendSocket("error",405)
         except ValueError:

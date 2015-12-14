@@ -26,28 +26,19 @@ def send_heart_beat_package():
     exceed_info = []
     idfs_info   = []
 
-    if idfs == None:
+    if idfs == None or exceed == None:
         return None
     # revoke expired service
-    elif idfs["status"] == "success":
+    elif idfs["status"] == "success" and exceed["status"] == "success":
         idfs_info = idfs["info"]
         for item in idfs_info:
             revoke(item)
-            time.sleep(0.1)
-    elif idfs["status"] == "error":
-        return None
 
-    # revoke traffic exceed service
-    if exceed == None:
-        return None
-    elif exceed["status"] == "success":
         exceed_info = exceed["info"]
         for item in exceed_info:
             revoke(item)
-            time.sleep(0.1)
-    elif exceed["status"] == "error":
+    else:
         return None
-
     # update traffic of all services
     update_traffic()
     # send heart_beat package
@@ -122,6 +113,7 @@ def update_traffic():
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
+
                         trafficDB.updateTraffic(serv_idf,u_t,d_t)
 
 def reset_traffic_per_month():
@@ -142,7 +134,7 @@ def start_cron_task():
     scheduler.add_job(reset_traffic_per_day,'cron',hour="0",minute="0",second="0")
     scheduler.add_job(reset_traffic_per_month,'cron',day="1",hour="0",minute="0",second="0")
 
-    # start the scheudler
+    # start the scheduler
     scheduler.start()
     return scheduler
 

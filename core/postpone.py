@@ -10,8 +10,8 @@ from utils import returnModel, timeUtil
 def postpone(service_idf,postpone_timestamp):
     rtn  = returnModel()
     siDB = serviceInfo()
-
-    postpone_result = siDB.updateExpireTimestamp(service_idf,postpone_timestamp)
+    p_time = int(postpone_timestamp)
+    postpone_result = siDB.updateExpireTimestamp(service_idf,p_time)
 
     if postpone_result == None:
         return rtn.error(500)

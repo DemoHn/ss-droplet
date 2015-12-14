@@ -1,9 +1,8 @@
-__author__ = 'Mingchuan'
-
 from config import config
 from utils import returnModel
 from model.db_service import serviceInfo
 from model.redis_device import redisDevice
+
 # delete all information about this server
 def revoke(service_idf):
     rtn  = returnModel()
