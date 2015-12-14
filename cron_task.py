@@ -37,6 +37,10 @@ def send_heart_beat_package():
         exceed_info = exceed["info"]
         for item in exceed_info:
             revoke(item)
+        print("kill")
+        print(idfs_info)
+        print("kill exceed")
+        print(exceed_info)
     else:
         return None
     # update traffic of all services
@@ -110,6 +114,7 @@ def update_traffic():
                         port = int(port_result["info"]["server_port"])
                         # get traffic
                         t_info = ssProc.getTraffic(port)
+                        print(t_info)
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
