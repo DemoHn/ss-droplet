@@ -10,9 +10,10 @@ class ssOBFSServerDatabase(Database):
     # @param `env` specify the running environment
     # for tests, `env` = "test",
     # and for actual development, `env` = "normal"
-    def __init__(self,env="normal"):
+    def __init__(self, env="normal"):
+        super().__init__()
         self.env = env
-        Database.get_instance(env = self.env).__init__()
+        Database.__init__(self,env=self.env)
         self.createTable()
         self.rtn = returnModel()
 
