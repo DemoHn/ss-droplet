@@ -17,9 +17,10 @@ This function is dedicated for checking if one instance is expired.
 If so, this instance should be suddenly shutdown and notify the main server to change the status
 and write the log
 """
+infoDB    = serviceInfo()
+trafficDB = serviceTraffic()
+
 def send_heart_beat_package():
-    infoDB    = serviceInfo()
-    trafficDB = serviceTraffic()
     idfs = infoDB.checkExpiredService()
     exceed = trafficDB.getExceedTrafficService()
 
