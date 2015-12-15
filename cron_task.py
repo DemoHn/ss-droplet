@@ -29,7 +29,21 @@ def send_heart_beat_package():
     # update traffic of all services
     update_traffic()
 
-    # send heart_beat package
+    print("kill")
+    print(idfs_info)
+    print("kill exceed")
+    print(exceed_info)
+
+    if idfs["status"] == "success" and exceed["status"] == "success":
+        idfs_info = idfs["info"]
+        for item in idfs_info:
+            revoke(item)
+
+        exceed_info = exceed["info"]
+        for item in exceed_info:
+            revoke(item)
+
+   # send heart_beat package
     pack_json = {
         "command":"heart_beat",
         "expire_idfs":idfs_info,
@@ -43,24 +57,6 @@ def send_heart_beat_package():
             json.dumps(pack_json),
             type="UDP"
         )
-
-    if idfs == None or exceed == None:
-        return None
-    # revoke expired service
-    elif idfs["status"] == "success" and exceed["status"] == "success":
-        idfs_info = idfs["info"]
-        for item in idfs_info:
-            revoke(item)
-
-        exceed_info = exceed["info"]
-        for item in exceed_info:
-            revoke(item)
-        print("kill")
-        print(idfs_info)
-        print("kill exceed")
-        print(exceed_info)
-    else:
-        return None
 
 def reset_traffic(strategy_name):
     def split_traffic_strategy(strategy_str):
@@ -99,6 +95,7 @@ def update_traffic():
     else:
         # get all items
         items = item_result["info"]
+        print(items)
         for item in items:
             serv_type = item["service_type"]
             serv_idf  = item["service_idf"]
@@ -116,7 +113,6 @@ def update_traffic():
                         port = int(port_result["info"]["server_port"])
                         # get traffic
                         t_info = ssProc.getTraffic(port)
-                        print(t_info)
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
