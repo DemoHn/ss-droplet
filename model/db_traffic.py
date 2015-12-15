@@ -59,7 +59,7 @@ class serviceTraffic(Database):
             c = self.cursor
             c.execute(get_str,[service_idf])
             data = c.fetchone()
-
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
@@ -106,6 +106,7 @@ class serviceTraffic(Database):
 
             c = self.cursor
             data = c.execute(get_str)
+            self.connection.commit()
             rtn_arr = []
             if data == None:
                 return self.rtn.error(620)
@@ -134,6 +135,7 @@ class serviceTraffic(Database):
 
                 c = self.cursor
                 data = c.execute(sel_str)
+                self.connection.commit()
                 data_model = []
                 if data == None:
                     return self.rtn.success([])

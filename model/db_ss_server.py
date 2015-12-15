@@ -62,6 +62,7 @@ class ssServerDatabase(Database):
         select_str = "SELECT * FROM ss_server"
         c = self.cursor
         data = c.execute(select_str)
+        self.connection.commit()
         for row in data:
             print(row)
 
@@ -71,7 +72,7 @@ class ssServerDatabase(Database):
             _str = "SELECT service_idf,server_port,password,method,timeout FROM ss_server WHERE `service_idf` = %s"
             data = c.execute(_str,[service_idf])
             _data = c.fetchone()
-
+            self.connection.commit()
             if _data == None:
                 return self.rtn.error(500)
             else:
@@ -94,6 +95,7 @@ class ssServerDatabase(Database):
             _str = "SELECT serivce_idf,server_port,password,method,timeout FROM ss_server"
 
             data = c.execute(_str)
+            self.connection.commit()
             return_arr = []
             for _data in data:
                 item = {
@@ -126,6 +128,7 @@ class ssServerDatabase(Database):
             port_str = "SELECT service_idf FROM ss_server WHERE server_port = %s"
             c.execute(port_str,[str(dest_port)])
             data = c.fetchone()
+            self.connection.commit()
             if data == None:
                 return False
             else:

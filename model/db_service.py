@@ -39,8 +39,6 @@ class serviceInfo(Database):
             add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (%s,%s,%s,%s,%s)"
             c = self.cursor
             expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
-            print(service_idf)
-            print(expire_str)
             c.execute(add_str,[service_idf,int(max_devices),float(max_traffic),expire_str,service_type])
 
             self.connection.commit()
@@ -54,7 +52,7 @@ class serviceInfo(Database):
             c = self.cursor
             c.execute(get_str,[service_idf])
             data = c.fetchone()
-
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
@@ -74,6 +72,7 @@ class serviceInfo(Database):
             get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info"
             c = self.cursor
             data = c.execute(get_str)
+            self.connection.commit()
             model_arr = []
             if data == None:
                 return self.rtn.error(520)
@@ -109,7 +108,7 @@ class serviceInfo(Database):
             expire_str = "SELECT service_idf FROM service_info WHERE now() > expire_time"
             c = self.cursor
             data = c.execute(expire_str)
-
+            self.connection.commit()
             model = []
             if data == None:
                 return self.rtn.error(620)
@@ -127,6 +126,7 @@ class serviceInfo(Database):
             c.execute(check_str,[service_idf])
 
             data = c.fetchone()
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
@@ -141,6 +141,7 @@ class serviceInfo(Database):
             c.execute(check_str,[service_idf])
 
             data = c.fetchone()
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
@@ -155,6 +156,7 @@ class serviceInfo(Database):
             c.execute(count_str)
 
             data = c.fetchone()
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
