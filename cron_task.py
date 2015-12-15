@@ -31,7 +31,6 @@ def send_heart_beat_package():
     # update traffic of all services
     update_traffic()
 
-    reset_traffic("AccountPerDayStrategy")
     if idfs["status"] == "success":
         idfs_info = idfs["info"]
         for item in idfs_info:
@@ -66,7 +65,6 @@ def reset_traffic(strategy_name):
     trafficDB = serviceTraffic()
     servDB    = serviceInfo()
     result    = trafficDB.getTrafficInstancesByStrategy(strategy_name)
-    print(result)
     if result == None:
         return None
     elif result["status"] == "error":
@@ -117,7 +115,6 @@ def update_traffic():
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
-                        print(d_t)
                         trafficDB.updateTraffic(serv_idf,u_t,d_t)
 
 def reset_traffic_per_month():
