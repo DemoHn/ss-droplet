@@ -22,8 +22,7 @@ def send_heart_beat_package():
     infoDB    = serviceInfo()
     trafficDB = serviceTraffic()
 
-    #idfs = infoDB.checkExpiredService()
-    idfs = infoDB.countActiveService()
+    idfs = infoDB.checkExpiredService()
     exceed = trafficDB.getExceedTrafficService()
 
     exceed_info = []

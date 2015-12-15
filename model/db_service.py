@@ -104,12 +104,12 @@ class serviceInfo(Database):
     # the term "expired" means current time if later than the expired time
     def checkExpiredService(self):
         try:
-           # expire_str = "SELECT service_idf FROM service_info WHERE %s > expire_time"
-            expire_str = "SELECT * FROM service_info"
             c = self.cursor
+           # expire_str = "SELECT service_idf FROM service_info WHERE %s > expire_time"
+            fetch_str = "SELECT service_idf FROM service_info"
             #data = c.execute(expire_str,[timeUtil.getReadableTime(timeUtil.getCurrentUTCtimestamp(),0)])
-            data = c.execute(expire_str)
-            print(data)
+            c.execute(fetch_str)
+            data = c.fetchall()
             self.connection.commit()
             model = []
             if data == None:
