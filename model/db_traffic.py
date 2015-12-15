@@ -130,7 +130,7 @@ class serviceTraffic(Database):
             if res == None:
                 return self.rtn.error(500)
             else:
-                sel_str = Template("SELECT service_idf, traffic_strategy FROM service_traffic WHERE `traffic_stategy` LIKE '%$strategy_name%'").substitute(
+                sel_str = Template("SELECT service_idf, traffic_strategy FROM service_traffic WHERE `traffic_strategy` LIKE '%$strategy_name%'").substitute(
                     strategy_name = strategy_name
                 )
 
