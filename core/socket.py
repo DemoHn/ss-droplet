@@ -34,7 +34,8 @@ class recvServer(socketserver.BaseRequestHandler):
     # if "from" == "host"
     def checkHostIP(self):
         ip_addr = self.client_address[0]
-        if ip_addr == config["CONTROL_SERVER_IP"]:
+        if ip_addr == config["CONTROL_SERVER_IP"]\
+                or config["CONTROL_SERVER_IP"] == "":
             return True
         else:
             return False

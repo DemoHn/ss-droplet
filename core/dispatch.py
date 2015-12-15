@@ -50,19 +50,17 @@ def new_service(max_traffic,max_devices,type,expire_timestamp,strategy=""):
             else:
                 return rtn.error(420)
 
-def gen_service_idf():
-    loop_str = "0123456789aWcdeFEhijklmnopQrstuvwSyzZ"
-    time_int = (int(time.time()*1000) % (1000*1000)) + int(randint(1000,9999) * (1000*1000))
+def gen_service_idf(length=16):
+    loop_str = "0123456789aWcdeFEhijklmnopQrstuvwSyzZBRrq"
     a = []
-    while time_int > 0:
-        a.append(loop_str[int(time_int) % 36])
-        time_int = int(time_int / 36)
-    a.reverse()
+    for i in range(0,length):
+        s = loop_str[randint(0,len(loop_str)-1)]
+        a.append(s)
     return ''.join(a)
 
 def gen_password(length):
     length = int(length)
-    str_dict = ("ABVDEXGHIJ","KLMZOPQRUT","abudefghzj","klmnopqwst","0123456789","0123456789","0123456789","!@?&{}[|])")
+    str_dict = ("ABVDEXGHIJ","KLMZOPQRUT","0123456789","abudefghzj","klmnopqwst","0123456789","0123456789","!@?&{}[|])")
 
     passwd_arr = []
     for i in range(0,length):
