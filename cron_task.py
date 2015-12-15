@@ -31,11 +31,6 @@ def send_heart_beat_package():
     # update traffic of all services
     update_traffic()
 
-    print("kill")
-    print(idfs)
-    print("kill exceed")
-    print(exceed)
-
     if idfs["status"] == "success":
         idfs_info = idfs["info"]
         for item in idfs_info:
@@ -99,7 +94,7 @@ def update_traffic():
     else:
         # get all items
         items = item_result["info"]
-        print(items)
+
         for item in items:
             serv_type = item["service_type"]
             serv_idf  = item["service_idf"]
@@ -117,6 +112,7 @@ def update_traffic():
                         port = int(port_result["info"]["server_port"])
                         # get traffic
                         t_info = ssProc.getTraffic(port)
+                        print(t_info)
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
@@ -136,7 +132,7 @@ def start_cron_task():
     # add job with some rules
     # 1. send a heart_beat UDP package to declare that the server is still alive.
     #    As for the frequency... 0s or 30s per every miniute
-    scheduler.add_job(send_heart_beat_package,'cron',second="*/5")
+    scheduler.add_job(send_heart_beat_package,'cron',second="*/10")
 
     # 2. reset traffic
     scheduler.add_job(reset_traffic_per_day,'cron',hour="0",minute="0",second="0")
