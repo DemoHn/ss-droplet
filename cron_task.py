@@ -30,9 +30,9 @@ def send_heart_beat_package():
     update_traffic()
 
     print("kill")
-    print(idfs_info)
+    print(idfs)
     print("kill exceed")
-    print(exceed_info)
+    print(exceed)
 
     if idfs["status"] == "success":
         idfs_info = idfs["info"]
