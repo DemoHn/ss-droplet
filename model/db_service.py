@@ -51,7 +51,7 @@ class serviceInfo(Database):
             c = self.cursor
             c.execute(get_str,[service_idf])
             data = c.fetchone()
-
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
@@ -71,6 +71,7 @@ class serviceInfo(Database):
             get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info"
             c = self.cursor
             data = c.execute(get_str)
+            self.connection.commit()
             model_arr = []
             if data == None:
                 return self.rtn.error(520)
@@ -109,6 +110,7 @@ class serviceInfo(Database):
             #data = c.execute(expire_str,[timeUtil.getReadableTime(timeUtil.getCurrentUTCtimestamp(),0)])
             data = c.execute(expire_str)
             print(data)
+            self.connection.commit()
             model = []
             if data == None:
                 return self.rtn.error(620)
@@ -126,6 +128,7 @@ class serviceInfo(Database):
             c.execute(check_str,[service_idf])
 
             data = c.fetchone()
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
@@ -140,6 +143,7 @@ class serviceInfo(Database):
             c.execute(check_str,[service_idf])
 
             data = c.fetchone()
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
@@ -154,6 +158,7 @@ class serviceInfo(Database):
             c.execute(count_str)
 
             data = c.fetchone()
+            self.connection.commit()
             if data == None:
                 return self.rtn.error(520)
             else:
