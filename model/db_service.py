@@ -6,7 +6,7 @@ import traceback
 class serviceInfo(Database):
     def __init__(self,env="normal"):
         self.env = env
-        Database.__init__(self,env = self.env)
+        Database.get_instance(env = self.env).__init__()
         self.createTable()
         self.rtn = returnModel()
 

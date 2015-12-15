@@ -5,6 +5,7 @@ import sqlite3
 from config import config
 import cymysql
 class Database:
+    instance = None
     def __init__(self,env="normal"):
         # server instance management for shadowsocks server instances.
         # @param `env` specify the running environment
@@ -31,6 +32,12 @@ class Database:
             self.cursor.execute("USE "+self.db_name)
         except Exception as e:
             traceback.print_exc()
+
+    @staticmethod
+    def get_instance(env = "normal"):
+        if Database.instance is None:
+            Database.instance = Database(env=env)
+        return Database.instance
 
     def get_file_directory(self):
         full_path = os.path.realpath(__file__)
