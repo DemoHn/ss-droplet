@@ -117,6 +117,7 @@ def update_traffic():
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
+                        print(d_t)
                         trafficDB.updateTraffic(serv_idf,u_t,d_t)
 
 def reset_traffic_per_month():
