@@ -34,11 +34,12 @@ def send_heart_beat_package():
     print("kill exceed")
     print(exceed_info)
 
-    if idfs["status"] == "success" and exceed["status"] == "success":
+    if idfs["status"] == "success":
         idfs_info = idfs["info"]
         for item in idfs_info:
             revoke(item)
 
+    if exceed["status"] == 'success':
         exceed_info = exceed["info"]
         for item in exceed_info:
             revoke(item)
