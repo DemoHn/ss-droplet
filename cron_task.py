@@ -130,6 +130,7 @@ def reset_traffic_per_day():
     reset_traffic("AccountPerDayStrategy")
 
 def start_cron_task():
+    """
     scheduler = BackgroundScheduler()
 
     # add job with some rules
@@ -144,6 +145,9 @@ def start_cron_task():
     # start the scheduler
     scheduler.start()
     return scheduler
-
+    """
+    while True:
+        send_heart_beat_package()
+        time.sleep(5)
 def stop_cron_task(scheduler):
     scheduler.shutdown()
