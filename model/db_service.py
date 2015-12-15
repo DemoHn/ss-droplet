@@ -106,9 +106,8 @@ class serviceInfo(Database):
     def checkExpiredService(self):
         try:
             c = self.cursor
-           # expire_str = "SELECT service_idf FROM service_info WHERE %s > expire_time"
-            fetch_str = "SELECT service_idf FROM service_info"
-            #data = c.execute(expire_str,[timeUtil.getReadableTime(timeUtil.getCurrentUTCtimestamp(),0)])
+            fetch_str = "SELECT service_idf FROM service_info WHERE NOW() > expire_time"
+
             c.execute(fetch_str)
             data = c.fetchall()
             self.connection.commit()

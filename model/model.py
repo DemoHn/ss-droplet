@@ -32,7 +32,7 @@ class Database:
             self.cursor.execute("USE "+self.db_name)
             # reset timezone to UTC
             self.cursor.execute("SET @@session.time_zone='+00:00'")
-            
+
         except Exception as e:
             traceback.print_exc()
 
