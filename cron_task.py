@@ -89,6 +89,7 @@ def reset_traffic(strategy_name):
 
 def update_traffic():
     servDB    = serviceInfo()
+    print(servDB)
     trafficDB = serviceTraffic()
     item_result = servDB.getItems()
     if item_result == None:
