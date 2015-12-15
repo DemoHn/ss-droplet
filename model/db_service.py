@@ -39,10 +39,7 @@ class serviceInfo(Database):
             add_str = "INSERT INTO service_info (service_idf,max_devices,max_traffic,expire_time,service_type) VALUES (%s,%s,%s,%s,%s)"
             c = self.cursor
             expire_str = timeUtil.getReadableTime(int(expire_timestamp),0)
-            print(service_idf)
-            print(expire_str)
             c.execute(add_str,[service_idf,int(max_devices),float(max_traffic),expire_str,service_type])
-
             self.connection.commit()
             return self.rtn.success(200)
         except Exception as e:
@@ -106,10 +103,12 @@ class serviceInfo(Database):
     # the term "expired" means current time if later than the expired time
     def checkExpiredService(self):
         try:
-            expire_str = "SELECT service_idf FROM service_info WHERE now() > expire_time"
+           # expire_str = "SELECT service_idf FROM service_info WHERE %s > expire_time"
+            expire_str = "SELECT * FROM service_info"
             c = self.cursor
+            #data = c.execute(expire_str,[timeUtil.getReadableTime(timeUtil.getCurrentUTCtimestamp(),0)])
             data = c.execute(expire_str)
-
+            print(data)
             model = []
             if data == None:
                 return self.rtn.error(620)
