@@ -73,8 +73,7 @@ class serviceInfo(Database):
         try:
             get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info"
             c = self.cursor
-            c.execute(get_str)
-            data = c.fetchone()
+            data = c.execute(get_str)
             model_arr = []
             if data == None:
                 return self.rtn.error(520)
