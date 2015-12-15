@@ -31,6 +31,7 @@ def send_heart_beat_package():
     # update traffic of all services
     update_traffic()
 
+    reset_traffic("AccountPerDayStrategy")
     if idfs["status"] == "success":
         idfs_info = idfs["info"]
         for item in idfs_info:
@@ -65,6 +66,7 @@ def reset_traffic(strategy_name):
     trafficDB = serviceTraffic()
     servDB    = serviceInfo()
     result    = trafficDB.getTrafficInstancesByStrategy(strategy_name)
+    print(result)
     if result == None:
         return None
     elif result["status"] == "error":
@@ -84,7 +86,6 @@ def reset_traffic(strategy_name):
 
 def update_traffic():
     servDB    = serviceInfo()
-    print(servDB)
     trafficDB = serviceTraffic()
     item_result = servDB.getItems()
     if item_result == None:
@@ -116,7 +117,6 @@ def update_traffic():
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
-                        print("upload:"+str(u_t)+" download:"+str(d_t))
                         trafficDB.updateTraffic(serv_idf,u_t,d_t)
 
 def reset_traffic_per_month():
@@ -132,7 +132,7 @@ def start_cron_task():
     # add job with some rules
     # 1. send a heart_beat UDP package to declare that the server is still alive.
     #    As for the frequency... 0s or 30s per every miniute
-    scheduler.add_job(send_heart_beat_package,'cron',second="*/10")
+    scheduler.add_job(send_heart_beat_package,'cron',second="*/15")
 
     # 2. reset traffic
     scheduler.add_job(reset_traffic_per_day,'cron',hour="0",minute="0",second="0")
