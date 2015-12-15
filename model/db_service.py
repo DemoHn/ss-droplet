@@ -70,7 +70,8 @@ class serviceInfo(Database):
         try:
             get_str = "SELECT service_idf, max_devices, max_traffic, expire_time,service_type FROM service_info"
             c = self.cursor
-            data = c.execute(get_str)
+            c.execute(get_str)
+            data = c.fetchall()
             self.connection.commit()
             model_arr = []
             if data == None:
@@ -141,7 +142,6 @@ class serviceInfo(Database):
             check_str = "SELECT max_traffic FROM service_info WHERE service_idf = %s"
             c = self.cursor
             c.execute(check_str,[service_idf])
-
             data = c.fetchone()
             self.connection.commit()
             if data == None:

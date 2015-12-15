@@ -61,7 +61,8 @@ class ssServerDatabase(Database):
     def _readRawData(self):
         select_str = "SELECT * FROM ss_server"
         c = self.cursor
-        data = c.execute(select_str)
+        c.execute(select_str)
+        data = c.fetchall()
         self.connection.commit()
         for row in data:
             print(row)
@@ -70,7 +71,7 @@ class ssServerDatabase(Database):
         try:
             c = self.cursor
             _str = "SELECT service_idf,server_port,password,method,timeout FROM ss_server WHERE `service_idf` = %s"
-            data = c.execute(_str,[service_idf])
+            c.execute(_str,[service_idf])
             _data = c.fetchone()
             self.connection.commit()
             if _data == None:
@@ -94,7 +95,8 @@ class ssServerDatabase(Database):
             c = self.cursor
             _str = "SELECT serivce_idf,server_port,password,method,timeout FROM ss_server"
 
-            data = c.execute(_str)
+            c.execute(_str)
+            data = c.fetchall()
             self.connection.commit()
             return_arr = []
             for _data in data:

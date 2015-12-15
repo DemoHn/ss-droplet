@@ -83,7 +83,7 @@ def halt_shadowsocks_obfs_service(service_idf):
     elif item["status"] == "error":
         return rtn.error(item["code"])
     else:
-        port = int(item["info"]["service_port"])
+        port = int(item["info"]["server_port"])
         result = ssProc.deleteServer(port)
         if result == False:
             return rtn.error(450)

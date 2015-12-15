@@ -105,7 +105,8 @@ class serviceTraffic(Database):
                        (service_traffic.upload_traffic + service_traffic.download_traffic) > service_info.max_traffic"
 
             c = self.cursor
-            data = c.execute(get_str)
+            c.execute(get_str)
+            data = c.fetchall()
             self.connection.commit()
             rtn_arr = []
             if data == None:
@@ -134,7 +135,8 @@ class serviceTraffic(Database):
                 )
 
                 c = self.cursor
-                data = c.execute(sel_str)
+                c.execute(sel_str)
+                data = c.fetchall()
                 self.connection.commit()
                 data_model = []
                 if data == None:

@@ -57,7 +57,8 @@ class ssOBFSServerDatabase(Database):
     def _readRawData(self):
         select_str = "SELECT * FROM ss_obfs_server"
         c = self.cursor
-        data = c.execute(select_str)
+        c.execute(select_str)
+        data = c.fetchall()
         for row in data:
             print(row)
 
@@ -65,7 +66,7 @@ class ssOBFSServerDatabase(Database):
         try:
             c = self.cursor
             _str = "SELECT service_idf,server_port,password FROM ss_obfs_server WHERE `service_idf` = %s"
-            data = c.execute(_str,[service_idf])
+            c.execute(_str,[service_idf])
             _data = c.fetchone()
             self.connection.commit()
             if _data == None:
@@ -87,7 +88,8 @@ class ssOBFSServerDatabase(Database):
             c = self.cursor
             _str = "SELECT serivce_idf,server_port,password FROM ss_obfs_server"
 
-            data = c.execute(_str)
+            c.execute(_str)
+            data = c.fetchall()
             self.connection.commit()
             return_arr = []
             for _data in data:
