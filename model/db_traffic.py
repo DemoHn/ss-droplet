@@ -155,7 +155,7 @@ class serviceTraffic(Database):
     def resetZero(self,service_idf):
         try:
             c = self.cursor
-            reset_str = "UDPATE service_traffic SET upload_traffic = %s, download_traffic = %s WHERE service_idf = %s"
+            reset_str = "UPDATE service_traffic SET upload_traffic = %s, download_traffic = %s WHERE service_idf = %s"
             c.execute(reset_str,[0.0,0.0,service_idf])
             self.connection.commit()
             return self.rtn.success(200)
