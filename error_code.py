@@ -72,3 +72,7 @@ errcode["901"] = "router IDF not unique"
 
 # about server instance
 errcode["1200"] = "create ss-obfs instance failed"
+
+# change traffic error
+errcode["1210"] = "traffic increment can't be negative"
+errcode["1211"] = "traffic decrement can't be negative"

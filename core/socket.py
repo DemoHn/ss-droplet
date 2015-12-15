@@ -7,7 +7,7 @@ from config import config
 from core.dispatch import new_service
 from core.connect import connect
 from core.revoke import revoke
-from core.postpone import postpone
+from core.postpone import postpone, increase_traffic,decrease_traffic
 import json
 
 from model.db_traffic import serviceTraffic
@@ -136,6 +136,33 @@ class recvServer(socketserver.BaseRequestHandler):
                         return self.sendSocket("success",200)
                 else:
                     return self.sendSocket("error",402)
+
+            elif json_data["command"] == "increase_traffic":
+                if json_data["from"] == "host":
+                    service_idf      = json_data["service_idf"]
+                    traffic          = json_data["traffic"]
+
+                    res              = increase_traffic(service_idf,traffic)
+                    if res["status"] == "error":
+                        return self.sendSocket("error",res["code"])
+                    else:
+                        return self.sendSocket("success",200)
+                else:
+                    return self.sendSocket("error",402)
+
+            elif json_data["command"] == "decrease_traffic":
+                if json_data["from"] == "host":
+                    service_idf      = json_data["service_idf"]
+                    traffic          = json_data["traffic"]
+
+                    res              = decrease_traffic(service_idf,traffic)
+                    if res["status"] == "error":
+                        return self.sendSocket("error",res["code"])
+                    else:
+                        return self.sendSocket("success",200)
+                else:
+                    return self.sendSocket("error",402)
+
             # get real time traffic (debug)
             elif json_data["command"] == "__get_traffic":
                 if json_data["from"] == "host":

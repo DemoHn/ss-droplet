@@ -79,7 +79,6 @@ def start_shadowsocks():
     }
 
     return_data = {
-
         "service_idf":"",
         "config":return_data_config
     }

@@ -189,3 +189,44 @@ class serviceInfo(Database):
             return self.rtn.success(200)
         except Exception as e:
             traceback.print_exc()
+
+    # adjust traffic limit (unit:MB)
+    def increaseTraffic(self,service_idf,traffic):
+        traffic = round(float(traffic),1)
+        try:
+            c = self.cursor
+            update_str = "UPDATE service_info SET max_traffic = max_traffic + %s WHERE service_idf = %s"
+
+            if traffic < 0:
+                return self.rtn.error(1210)
+            c.execute(update_str,[traffic,service_idf])
+            self.connection.commit()
+
+            return self.rtn.success(200)
+        except Exception as e:
+            traceback.print_exc()
+
+    def decreaseTraffic(self,service_idf,traffic):
+        tra = round(float(traffic),1)
+        try:
+            # first get current setting traffic
+            c = self.cursor
+            get_str = "SELECT max_traffic FROM service_info WHERE service_idf = %s"
+
+            c.execute(get_str)
+            data = c.fetchone()
+            if data == None:
+                return self.rtn.error(500)
+            else:
+                current_traffic = round(float(data[0]),1)
+                # decrease too much
+                if tra > current_traffic or tra < 0:
+                    return self.rtn.error(1211)
+                else:
+                    update_str = "UPDATE service_info SET max_traffic = max_traffic - %s WHERE service_idf = %s"
+                    c.execute(update_str,[tra,service_idf])
+                    self.connection.commit()
+                    return self.rtn.success(200)
+
+        except Exception as e:
+            traceback.print_exc()
