@@ -112,11 +112,11 @@ def update_traffic():
                         port = int(port_result["info"]["server_port"])
                         # get traffic
                         t_info = ssProc.getTraffic(port)
-                        print(t_info)
+
                         # change to MBs
                         u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
                         d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
-
+                        print("upload:"+str(u_t)+" download:"+str(d_t))
                         trafficDB.updateTraffic(serv_idf,u_t,d_t)
 
 def reset_traffic_per_month():
