@@ -1,5 +1,5 @@
 #coding=utf-8
-__author__ = 'Mingchuan'
+__author__ = 'Nigshoxiz'
 import os
 import time
 from datetime import datetime

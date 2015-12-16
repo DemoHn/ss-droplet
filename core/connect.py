@@ -1,4 +1,4 @@
-__author__ = 'Mingchuan'
+__author__ = 'Nigshoxiz'
 # Last Edit: 2015-12-6
 from config import config
 from model.db_service import serviceInfo

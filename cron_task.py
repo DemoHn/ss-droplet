@@ -1,4 +1,4 @@
-__author__ = 'Mingchuan'
+__author__ = 'Nigshoxiz'
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
 

@@ -1,3 +1,4 @@
 [submodule "lib/ss_obfs"]
 	path = lib/ss_obfs
 	url = https://github.com/breakwa11/shadowsocks.git
+	branch = manyuser

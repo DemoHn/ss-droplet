@@ -1,5 +1,5 @@
 #coding=utf-8
-__author__ = 'Mingchuan'
+__author__ = 'Nigshoxiz'
 from config import config
 from model.db_service import serviceInfo
 from utils import returnModel

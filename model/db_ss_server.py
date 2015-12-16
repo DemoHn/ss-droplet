@@ -1,4 +1,4 @@
-__author__ = "Mingchuan"
+__author__ = "Nigshoxiz"
 #coding=utf-8
 # last edit: 2015-12-04
 

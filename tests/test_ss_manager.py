@@ -1,4 +1,4 @@
-__author__ = 'Mingchuan'
+__author__ = 'Nigshoxiz'
 
 import sys,os
 

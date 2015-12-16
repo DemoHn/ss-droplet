@@ -1,4 +1,4 @@
-__author__ = 'Mingchuan'
+__author__ = 'Nigshoxiz'
 import redis
 import os,subprocess,traceback
 import sqlite3
