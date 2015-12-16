@@ -1,6 +1,7 @@
 # ss-droplet
 
-## 简介  
+## 简介
+  
 `ss-droplet` 是一个shadowsocks多用户管理程序。  
 一般部署于墙外的代理服务器（下称droplet服务器）上,让一个droplet服务器能够同时给多个用户提供shadowsocks网络加速服务。故而本管理程序面向的主要是各大“上网加速”类网站的站长们。
   
@@ -20,7 +21,6 @@
 > 
 
 ## 安装与配置
----------------------
 
 本程序的运行环境是python3, 涉及到的后台数据库有`redis`和`mariaDB`(mysql)
 
@@ -34,7 +34,7 @@
 `pip3 install redis apscheduler cymysql`
 
 复制源代码到服务器中:  
-`git clone https://github.com/DemoHn/ss-droplet`
+`git clone https://github.com/DemoHn/ss-droplet.git --recurse`
 
 依据`config.py.example`修改配置：  
 ```
@@ -45,8 +45,10 @@ vi config.py
 在`config["MYSQL_PASSWORD"]`这一项中填上自己的mariadb密码。    
 __注：__ 下一节会介绍`config["CONTROL_SERVER_IP"]` 的含义，如果您已经知道了它的作用，那么就直接填上"主机"的IP地址吧。(目前只试过ipv4)
 
+运行服务：
+`nohup python3 app.py &`
+
 ## 两种工作模式
---------------------------------
 
 本程序支持两种工作模式:  
 1. 主机模式 (control mode)
@@ -72,7 +74,6 @@ __注：__ 下一节会介绍`config["CONTROL_SERVER_IP"]` 的含义，如果您
 细节与“主机模式”类似，此处不再详述。
 
 ## Socket API
-----------------------------------
 
 与droplet服务器的所有通信采用`socket`通信方式。TCP和UDP监听端口见`config.py`中`config["SERVER_LISTEN_PORT"]`。  
 __注意：__ 无论是在主机模式还是在独立模式下，发送中的"from"参数都是一样的，并不因为在“独立模式”下没有`host`的存在就不写`host`了。  
@@ -89,7 +90,7 @@ __注意：__ 无论是在主机模式还是在独立模式下，发送中的"fr
 
 __发送API：__  
 
-### 1. Ping 
+#### 1. Ping 
 _发送:_   
 ```
 {  
@@ -101,7 +102,7 @@ _返回:_
 {"status": "success", "code": 200, "info":"ping"}
 ```
   
-### 2. Create A brand-new shadowsocks service
+#### 2. Create A brand-new shadowsocks service
 _发送:_  
 ```
 {  
@@ -140,7 +141,7 @@ _返回:_
 }}  
 ```
 
-### 3. Connect To the Server to get the service
+#### 3. Connect To the Server to get the service
 _发送:_  
 ```
 {  
@@ -155,7 +156,7 @@ _返回:_
 {"status": "success", "code": 200, "info":{ <service_configuration> }}
 ```
 
-### 4. Revoke the service even if it is still valid
+#### 4. Revoke the service even if it is still valid
 (BE REALLY CAREFUL)  
 
 _发送:_  
@@ -171,7 +172,7 @@ _返回:_
 {"status": "success", "code": 200, "info":200}
 ```
 
-### 5. Postpone the expire time of a service
+#### 5. Postpone the expire time of a service
 (BE REALLY CAREFUL)  
 
 _发送:_  
@@ -188,7 +189,7 @@ _返回:_
 {"status": "success", "code": 200, "info":200}
 ```
 
-### 6. Increase the available traffic for a service 
+#### 6. Increase the available traffic for a service 
 (BE REALLY CAREFUL)  
 
 _发送:_  
@@ -205,7 +206,7 @@ _返回:_
 {"status": "success", "code": 200, "info":200}
 ```
 
-### 7. Decrease the available traffic for a service 
+#### 7. Decrease the available traffic for a service 
 (BE REALLY CAREFUL)  
 
 _发送:_  
@@ -223,11 +224,11 @@ _返回:_
 ```
 
 ## 与shadowsocks-obfs的关系
--------------------------------------
+
 `ss-droplet`自带对[shadowsocks-obfs](https://github.com/breakwa11/shadowsocks/tree/manyuser)的支持。
 这里只是把config.json在运行时给覆盖了一下，并没有修改里面的源代码。    
 
 
 ## 开源协议
-------------------------------------
+
 GPL ,就这样吧。
