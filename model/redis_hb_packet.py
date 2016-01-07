@@ -33,24 +33,30 @@ class redisHeartBeatPacket(RedisDatabase):
         self.set_name = "curr_idfs"
         # reset packet_tag
         self.redis.hset(self.key_name,"packet_tag",0)
+        self.redis.hset(self.key_name,"expire_idfs","")
+        self.redis.hset(self.key_name,"traffic_exceed_idfs","")
         pass
 
     def setPacketTag(self,tag):
         return self.redis.hset(self.key_name,"packet_tag",tag)
 
     def getPacketTag(self):
-        return self.redis.hget(self.key_name,"packet_tag")
+        return self.__hget(self.key_name,"packet_tag")
 
     def clearPacketTag(self,tag):
-        curr_tag = self.redis.hget(self.key_name,"packet_tag")
+        curr_tag = self.__hget(self.key_name,"packet_tag")
         if curr_tag == str(tag):
             return self.redis.hset(self.key_name,"packet_tag",0)
         else:
             return None
 
+    def __hget(self,key,field):
+        b = self.redis.hget(key,field)
+        return b.decode("utf-8")
+
     def updateExpireIdfs(self,idfs_arr):
         # get str and convert to array
-        curr_idfs_str = self.redis.hget(self.key_name,"expire_idfs")
+        curr_idfs_str = self.__hget(self.key_name,"expire_idfs")
 
         print(curr_idfs_str)
         if curr_idfs_str == "":
@@ -74,7 +80,7 @@ class redisHeartBeatPacket(RedisDatabase):
 
     def updateTrafficExceedIdfs(self,idfs_arr):
         # get str and convert to array
-        curr_idfs_str = self.redis.hget(self.key_name,"traffic_exceed_idfs")
+        curr_idfs_str = self.__hget(self.key_name,"traffic_exceed_idfs")
 
         if curr_idfs_str == "":
             curr_idfs_arr = []
@@ -106,10 +112,10 @@ class redisHeartBeatPacket(RedisDatabase):
         self.redis.sadd(self.set_name,service_idf)
 
         # if no values in, then set it
-        if self.redis.hget(self.key_name,field_u) == None or \
-            self.redis.hget(self.key_name,field_d) == None or \
-            self.redis.hget(self.key_name,field_du) == None or \
-            self.redis.hget(self.key_name,field_dd) == None:
+        if self.__hget(self.key_name,field_u) == None or \
+            self.__hget(self.key_name,field_d) == None or \
+            self.__hget(self.key_name,field_du) == None or \
+            self.__hget(self.key_name,field_dd) == None:
 
             self.redis.hset(self.key_name,field_u,0)
             self.redis.hset(self.key_name,field_d,0)
@@ -119,7 +125,7 @@ class redisHeartBeatPacket(RedisDatabase):
         # if succeed, both upload and delta_uplaod filed should update to the newest
         if int(self.getPacketTag()) == 0:
             # upload
-            old_u_t = float(self.redis.hget(self.key_name,field_u))
+            old_u_t = float(self.__hget(self.key_name,field_u))
             delta   = float(u_t) - old_u_t
             # if old_u_t is larger than new_u_t, that means the droplet must have been restarted and traffic has calculated again
             if float(u_t) < old_u_t:
@@ -127,7 +133,7 @@ class redisHeartBeatPacket(RedisDatabase):
             self.redis.hset(self.key_name,field_du,delta)
             self.redis.hset(self.key_name,field_u,float(u_t))
             # download
-            old_d_t = float(self.redis.hget(self.key_name,field_d))
+            old_d_t = float(self.__hget(self.key_name,field_d))
             delta   = float(d_t) - old_d_t
             # if old_d_t is larger than new_d_t, that means the droplet must have been restarted and traffic has calculated again
             if float(d_t) < old_d_t:
@@ -135,8 +141,8 @@ class redisHeartBeatPacket(RedisDatabase):
             self.redis.hset(self.key_name,field_dd,delta)
             self.redis.hset(self.key_name,field_d,float(d_t))
         else:
-            du_t = float(self.redis.hget(self.key_name,field_du))
-            old_u_t = float(self.redis.hget(self.key_name,field_u))
+            du_t = float(self.__hget(self.key_name,field_du))
+            old_u_t = float(self.__hget(self.key_name,field_u))
 
             new_du = du_t + float(u_t) - old_u_t
             if float(u_t) < old_u_t:
@@ -144,8 +150,8 @@ class redisHeartBeatPacket(RedisDatabase):
 
             self.redis.hset(self.key_name,field_du,new_du)
             #download
-            dd_t = float(self.redis.hget(self.key_name,field_dd))
-            old_d_t = float(self.redis.hget(self.key_name,field_d))
+            dd_t = float(self.__hget(self.key_name,field_dd))
+            old_d_t = float(self.__hget(self.key_name,field_d))
 
             new_dd = dd_t + float(d_t) - old_d_t
             if float(d_t) < old_d_t:
@@ -176,8 +182,8 @@ class redisHeartBeatPacket(RedisDatabase):
         else:
             pack_json["package_tag"] = self.getPacketTag()
 
-        expire_idfs_str = self.redis.hget(self.key_name,"expire_idfs")
-        traffic_exceed_str = self.redis.hget(self.key_name,"traffic_exceed_idfs")
+        expire_idfs_str = self.__hget(self.key_name,"expire_idfs")
+        traffic_exceed_str = self.__hget(self.key_name,"traffic_exceed_idfs")
 
         if expire_idfs_str != "":
             pack_json["expire_idfs"] = expire_idfs_str.split(",")
@@ -189,8 +195,8 @@ class redisHeartBeatPacket(RedisDatabase):
         _idfs = self.redis.smembers(self.set_name)
 
         for item in _idfs:
-            idf_du_t = float(self.redis.hget(self.key_name,item+"_du"))
-            idf_dd_t = float(self.redis.hget(self.key_name,item+"_dd"))
+            idf_du_t = float(self.__hget(self.key_name,item+"_du"))
+            idf_dd_t = float(self.__hget(self.key_name,item+"_dd"))
 
             info_arr = [item,idf_du_t,idf_dd_t]
             pack_json["delta_traffic"].extend(info_arr)
