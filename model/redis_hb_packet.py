@@ -52,7 +52,7 @@ class redisHeartBeatPacket(RedisDatabase):
         # get str and convert to array
         curr_idfs_str = self.redis.hget(self.key_name,"expire_idfs")
 
-
+        print(curr_idfs_str)
         if curr_idfs_str == "":
             curr_idfs_arr = []
         else:
