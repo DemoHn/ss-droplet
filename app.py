@@ -31,7 +31,7 @@ def execCommand(cmd):
 # (usually when the server is going to restart)
 def init():
 
-    server_tcp = start_socket_server()
+    (server_tcp,server_udp) = start_socket_server()
     print("start web listening port: "+str(config["SERVER_LISTEN_PORT"]))
 
     scheduler = start_cron_task()
@@ -43,7 +43,8 @@ def init():
     except (KeyboardInterrupt,SystemExit):
         stop_cron_task(scheduler)
         stop_socket_server(server_tcp)
-
+        stop_socket_server(server_udp)
+        
 # for the first time, do the function
 def system_init():
     lock_file_exists = os.path.exists(get_file_directory()+"/.init.lock")

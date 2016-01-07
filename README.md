@@ -223,6 +223,21 @@ _返回:_
 {"status": "success", "code": 200, "info":200}
 ```
 
+#### 8. 临时改变服务配额数 
+
+_发送:_  
+```
+{  
+    "from":"host",  
+    "command":"adjust_quota",  
+    "new_quota": *** 
+}  
+```
+_返回:_  
+```
+{"status": "success", "code": 200, "info":200}
+```
+
 ## 与shadowsocks-obfs的关系
 
 `ss-droplet`自带对[shadowsocks-obfs](https://github.com/breakwa11/shadowsocks/tree/manyuser)的支持。

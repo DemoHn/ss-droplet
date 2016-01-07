@@ -33,6 +33,7 @@ config["HEARTBEAT_PULSE"] = 30
 
 # socket server
 config["SERVER_LISTEN_PORT"] = 7129
+config["SERVER_LISTEN_PORT_UDP"] = config["SERVER_LISTEN_PORT"] + 1
 
 # redis server
 config["REDIS_PORT"] = 6379

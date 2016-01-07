@@ -15,6 +15,41 @@ from model.db_traffic import serviceTraffic
 # using TCP protocol
 # and it is asynchronous
 # This server receives the request from client and HOST server
+
+class ThreadedUDPServer(socketserver.ThreadingMixIn,socketserver.UDPServer):
+    pass
+class recvServer_UDP(socketserver.BaseRequestHandler):
+    def sendSocket(self,status,info):
+        rtn = returnModel("string")
+        r_str = ""
+        if status == "success":
+            r_str = rtn.success(info)
+        elif status == "error":
+            r_str = rtn.error(info)
+
+        rb = bytes(r_str,'utf-8')
+        # dest
+        socket = self.request[1]
+        socket.sendto(rb, self.client_address)
+
+    def handle(self):
+        data = str(self.request[0].strip(),"utf-8")
+        handle_UDP(self,data)
+
+def handle_UDP(serv,data):
+    try:
+        jdata = json.loads(data)
+        if jdata["command"] == "ping":
+            serv.sendSocket("success","pong")
+        elif jdata["command"] == "heart_beat":
+            # TODO
+            pass
+        else:
+            serv.sendSocket("error",405)
+    except TypeError:
+        serv.sendSocket("error",400)
+    pass
+
 class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
@@ -40,6 +75,7 @@ class recvServer(socketserver.BaseRequestHandler):
         else:
             return False
         pass
+
     # recv data format: (JSON)
     # e.g. :
     # {
@@ -163,6 +199,15 @@ class recvServer(socketserver.BaseRequestHandler):
                 else:
                     return self.sendSocket("error",402)
 
+            elif json_data["command"] == "adjust_quota":
+                if json_data["from"] == "host":
+                    new_quota        = json_data["new_quota"]
+
+                    #注意：这个调整只是临时的，服务只要一重启就会恢复原状
+                    config["SERVICE_QUOTA"] = int(new_quota)
+                    return self.sendSocket("success",200)
+                else:
+                    return self.sendSocket("error",402)
             # get real time traffic (debug)
             elif json_data["command"] == "__get_traffic":
                 if json_data["from"] == "host":
@@ -188,7 +233,14 @@ def start_socket_server():
     server_thread.daemon = True
     server_thread.start()
 
-    return server
+    # start a thread (UDP Server)
+    PORT_UDP = config["SERVER_LISTEN_PORT_UDP"]
+    server_udp = ThreadedUDPServer((HOST,PORT_UDP),recvServer_UDP)
+    server_thread_udp = threading.Thread(target=server_udp.serve_forever)
+    server_thread_udp.daemon = True
+    server_thread_udp.start()
+
+    return (server,server_udp)
 
 def stop_socket_server(server):
     server.shutdown()

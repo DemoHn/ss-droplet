@@ -5,11 +5,12 @@ import time
 # import databases
 from model.db_service import serviceInfo
 from model.db_traffic import serviceTraffic
+from model.redis_hb_packet import redisHeartBeatPacket
 from config import config
 from core.revoke import revoke
 from core.socket import send_socket_request
 import json
-
+from random import randint
 # cron task
 # That means, the following function will be executed periodically and, of course, in schedule.
 """
@@ -21,12 +22,10 @@ and write the log
 def send_heart_beat_package():
     infoDB    = serviceInfo()
     trafficDB = serviceTraffic()
+    HB        = redisHeartBeatPacket()
 
     idfs = infoDB.checkExpiredService()
     exceed = trafficDB.getExceedTrafficService()
-
-    exceed_info = []
-    idfs_info   = []
 
     # update traffic of all services
     update_traffic()
@@ -35,18 +34,16 @@ def send_heart_beat_package():
         idfs_info = idfs["info"]
         for item in idfs_info:
             revoke(item)
+        HB.updateExpireIdfs(idfs_info)
 
     if exceed["status"] == 'success':
         exceed_info = exceed["info"]
         for item in exceed_info:
             revoke(item)
+        HB.updateTrafficExceedIdfs(exceed_info)
 
    # send heart_beat package
-    pack_json = {
-        "command":"heart_beat",
-        "expire_idfs":idfs_info,
-        "traffic_exceed_idfs":exceed_info
-    }
+    pack_json = HB.generatePakcetContent()
 
     if config["CONTROL_SERVER_IP"] != "": #and config["SEND_HEARTBEAT_PACK"] == True:
         send_socket_request(
@@ -85,6 +82,7 @@ def reset_traffic(strategy_name):
 def update_traffic():
     servDB    = serviceInfo()
     trafficDB = serviceTraffic()
+    HB        = redisHeartBeatPacket()
     item_result = servDB.getItems()
     if item_result == None:
         return None
@@ -112,10 +110,11 @@ def update_traffic():
                         # get traffic
                         t_info = ssProc.getTraffic(port)
 
-                        # change to MBs
-                        u_t    = round(float(t_info["upload"]) / (1000 * 1000),1)
-                        d_t    = round(float(t_info["download"]) / (1000 * 1000),1)
+                        # change to MBs X.YYY MB
+                        u_t    = round(float(t_info["upload"]) / (1000 * 1000),3)
+                        d_t    = round(float(t_info["download"]) / (1000 * 1000),3)
                         trafficDB.updateTraffic(serv_idf,u_t,d_t)
+                        HB.updateTraffic(serv_idf,u_t,d_t)
 
 def reset_traffic_per_month():
     reset_traffic("AccountPerMonthStrategy")

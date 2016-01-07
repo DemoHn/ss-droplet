@@ -89,8 +89,8 @@ class serviceTraffic(Database):
         try:
             update_str = "UPDATE service_traffic SET upload_traffic = %s, download_traffic = %s WHERE service_idf = %s"
             c = self.cursor
-            u_t = round(float(new_upload_traffic),1)
-            d_t = round(float(new_download_traffic),1)
+            u_t = round(float(new_upload_traffic),3)
+            d_t = round(float(new_download_traffic),3)
             c.execute(update_str,[u_t,d_t,service_idf])
             self.connection.commit()
             return self.rtn.success(200)
