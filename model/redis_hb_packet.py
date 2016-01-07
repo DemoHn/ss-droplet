@@ -160,8 +160,8 @@ class redisHeartBeatPacket(RedisDatabase):
             self.redis.hset(self.key_name,field_dd,new_dd)
 
     def deleteObsoleteIdfs(self,obsolete_idfs_arr):
-        self.redis.srem(self.key_name,obsolete_idfs_arr)
         for item in obsolete_idfs_arr:
+            self.redis.srem(self.key_name,item)
             self.redis.hdel(self.key_name,[item+"_upload",item+"_download"])
         return None
 
