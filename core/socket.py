@@ -41,8 +41,8 @@ def handle_UDP(serv,data):
     try:
         HB = redisHeartBeatPacket()
         jdata = json.loads(data)
-        if jdata["command"] == "hb_back":
-            tag = jdata["tag"]
+        if jdata["info"]["command"] == "hb_back":
+            tag = jdata["info"]["tag"]
             # unlock the pack, to represent that the host server has received
             HB.clearPacketTag(tag)
     except TypeError:
