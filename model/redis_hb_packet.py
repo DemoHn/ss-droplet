@@ -195,9 +195,10 @@ class redisHeartBeatPacket(RedisDatabase):
         _idfs = self.redis.smembers(self.set_name)
 
         for item in _idfs:
+            item = item.decode("utf-8")
             idf_du_t = float(self.__hget(self.key_name,item+"_du"))
             idf_dd_t = float(self.__hget(self.key_name,item+"_dd"))
-
+            
             info_arr = [item,idf_du_t,idf_dd_t]
             pack_json["delta_traffic"].extend(info_arr)
 
