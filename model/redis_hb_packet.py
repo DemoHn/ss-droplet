@@ -159,7 +159,9 @@ class redisHeartBeatPacket(RedisDatabase):
 
         # generate a tag randomly or maintain the original one
         if int(self.getPacketTag()) == 0:
-            pack_json["package_tag"] = randint(100000,999999)
+            tag =  randint(1000000,9999999)
+            pack_json["package_tag"] = tag
+            self.setPacketTag(tag)
         else:
             pack_json["package_tag"] = self.getPacketTag()
 

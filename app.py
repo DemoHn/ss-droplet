@@ -44,7 +44,7 @@ def init():
         stop_cron_task(scheduler)
         stop_socket_server(server_tcp)
         stop_socket_server(server_udp)
-        
+
 # for the first time, do the function
 def system_init():
     lock_file_exists = os.path.exists(get_file_directory()+"/.init.lock")

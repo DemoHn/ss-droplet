@@ -11,6 +11,7 @@ from core.postpone import postpone, increase_traffic,decrease_traffic
 import json
 
 from model.db_traffic import serviceTraffic
+from model.redis_hb_packet import redisHeartBeatPacket
 # socket server
 # using TCP protocol
 # and it is asynchronous
@@ -38,14 +39,12 @@ class recvServer_UDP(socketserver.BaseRequestHandler):
 
 def handle_UDP(serv,data):
     try:
+        HB = redisHeartBeatPacket()
         jdata = json.loads(data)
-        if jdata["command"] == "ping":
-            serv.sendSocket("success","pong")
-        elif jdata["command"] == "heart_beat":
-            # TODO
-            pass
-        else:
-            serv.sendSocket("error",405)
+        if jdata["command"] == "hb_back":
+            tag = jdata["tag"]
+            # unlock the pack, to represent that the host server has received
+            HB.clearPacketTag(tag)
     except TypeError:
         serv.sendSocket("error",400)
     pass
