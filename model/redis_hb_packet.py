@@ -105,6 +105,17 @@ class redisHeartBeatPacket(RedisDatabase):
         # add idf into curr_idfs (set)
         self.redis.sadd(self.set_name,service_idf)
 
+        # if no values in, then set it
+        if self.redis.hget(self.key_name,field_u) == None or \
+            self.redis.hget(self.key_name,field_d) == None or \
+            self.redis.hget(self.key_name,field_du) == None or \
+            self.redis.hget(self.key_name,field_dd) == None:
+
+            self.redis.hset(self.key_name,field_u,0)
+            self.redis.hset(self.key_name,field_d,0)
+            self.redis.hset(self.key_name,field_du,0)
+            self.redis.hset(self.key_name,field_dd,0)
+
         # if succeed, both upload and delta_uplaod filed should update to the newest
         if int(self.getPacketTag()) == 0:
             # upload
