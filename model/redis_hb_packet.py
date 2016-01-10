@@ -53,7 +53,6 @@ class redisHeartBeatPacket(RedisDatabase):
     def __hget(self,key,field):
         b = self.redis.hget(key,field)
         if b == None:
-            self.redis.hset(key,field,"")
             return ""
         return b.decode("utf-8")
 
@@ -115,10 +114,10 @@ class redisHeartBeatPacket(RedisDatabase):
         self.redis.sadd(self.set_name,service_idf)
 
         # if no values in, then set it
-        if self.__hget(self.key_name,field_u) == None or \
-            self.__hget(self.key_name,field_d) == None or \
-            self.__hget(self.key_name,field_du) == None or \
-            self.__hget(self.key_name,field_dd) == None:
+        if self.__hget(self.key_name,field_u) == "" or \
+            self.__hget(self.key_name,field_d) == "" or \
+            self.__hget(self.key_name,field_du) == "" or \
+            self.__hget(self.key_name,field_dd) == "":
 
             self.redis.hset(self.key_name,field_u,0)
             self.redis.hset(self.key_name,field_d,0)
