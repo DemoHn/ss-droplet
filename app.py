@@ -70,6 +70,7 @@ def system_init():
             )
 
             if return_data["status"] == "success":
+                print("register succeed.")
                 break
             else:
                 time.sleep(1)
