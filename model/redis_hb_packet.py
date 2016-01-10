@@ -52,6 +52,9 @@ class redisHeartBeatPacket(RedisDatabase):
 
     def __hget(self,key,field):
         b = self.redis.hget(key,field)
+        if b == None:
+            self.redis.hset(key,field,"")
+            return ""
         return b.decode("utf-8")
 
     def updateExpireIdfs(self,idfs_arr):
