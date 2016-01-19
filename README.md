@@ -26,7 +26,7 @@
 
 在Ubuntu操作系统下：
 
-`apt-get install python3-pip mariadb-server mariadb-client redis-server`
+`apt-get install python3 python3-pip mariadb-server mariadb-client redis-server`
 
 在随后的安装界面中设置mariadb的密码;
 

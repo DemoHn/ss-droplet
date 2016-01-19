@@ -117,10 +117,12 @@ def update_traffic():
                         HB.updateTraffic(serv_idf,u_t,d_t)
 
 def reset_traffic_per_month():
-    reset_traffic("AccountPerMonthStrategy")
+    # plz do not write the fill name like: AccountPerMonthStrategy
+    # if so, other strategy name that has the same property (i.e. AccountPerMonthOrdinaryStrategy) would not be matched
+    reset_traffic("AccountPerMonth")
 
 def reset_traffic_per_day():
-    reset_traffic("AccountPerDayStrategy")
+    reset_traffic("AccountPerDay")
 
 def start_cron_task():
 
