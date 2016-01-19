@@ -133,9 +133,9 @@ def start_cron_task():
     #    As for the frequency... 0s or 30s per every miniute
     scheduler.add_job(send_heart_beat_package,'cron',second="*/15")
 
-    # 2. reset traffic notice:(UTC 16:00 <--> CST 24:00)
-    scheduler.add_job(reset_traffic_per_day,'cron',hour="16",minute="0",second="0")
-    scheduler.add_job(reset_traffic_per_month,'cron',day="last",hour="16",minute="0",second="0")
+    # 2. reset traffic notice:(UTC 00:00 <--> CST 08:00)
+    scheduler.add_job(reset_traffic_per_day,'cron',hour="0",minute="0",second="0")
+    scheduler.add_job(reset_traffic_per_month,'cron',day="last",hour="0",minute="0",second="0")
 
     # start the scheduler
     scheduler.start()
